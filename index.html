@@ -704,6 +704,17 @@
             }
         }
 
+        // Helper function to get user-friendly error messages
+        function getErrorMessage(status, context = 'general') {
+            const messages = {
+                404: context === 'wallet' ? 'Wallet not found in database' : 'Resource not found',
+                400: 'Invalid data. Please check your inputs',
+                500: 'Server error occurred',
+                503: 'Service temporarily unavailable'
+            };
+            return messages[status] || 'HTTP error! status: ' + status;
+        }
+
         // Async function to GET wallet data from API
         async function checkWallet() {
             const input = document.getElementById('walletInput').value;
@@ -724,15 +735,7 @@
                 const response = await fetch(`/api/wallet/${encodeURIComponent(input)}`);
                 
                 if (!response.ok) {
-                    let errorMessage = 'HTTP error! status: ' + response.status;
-                    if (response.status === 404) {
-                        errorMessage = 'Wallet not found in database';
-                    } else if (response.status === 500) {
-                        errorMessage = 'Server error occurred';
-                    } else if (response.status === 503) {
-                        errorMessage = 'Service temporarily unavailable';
-                    }
-                    throw new Error(errorMessage);
+                    throw new Error(getErrorMessage(response.status, 'wallet'));
                 }
                 
                 const data = await response.json();
@@ -811,18 +814,10 @@
                 });
 
                 if (!response.ok) {
-                    let errorMessage = 'HTTP error! status: ' + response.status;
-                    if (response.status === 400) {
-                        errorMessage = 'Invalid report data. Please check your inputs';
-                    } else if (response.status === 500) {
-                        errorMessage = 'Server error occurred';
-                    } else if (response.status === 503) {
-                        errorMessage = 'Service temporarily unavailable';
-                    }
-                    throw new Error(errorMessage);
+                    throw new Error(getErrorMessage(response.status, 'report'));
                 }
 
-                const result = await response.json();
+                await response.json();
                 
                 // Success notification
                 showNotification('Laporan terkirim! Akan direview dalam 24-48 jam. Poin akan ditambahkan setelah verifikasi.', 'success');
@@ -854,7 +849,7 @@
                 'info': { bg: '#ff9800', text: '#fff' }
             };
             
-            const colors = colorMap[type] || colorMap['info'];
+            const colors = colorMap[type] || colorMap.info;
 
             // Create notification element
             const notification = document.createElement('div');

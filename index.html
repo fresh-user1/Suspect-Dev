@@ -23,6 +23,15 @@
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
+        /* Light mode theme */
+        body.light-mode {
+            --bg-color: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --border-color: #ddd;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         
@@ -33,6 +42,7 @@
             line-height: 1.6;
             overflow-x: hidden;
             position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Efek Noise & Scanline */
@@ -62,14 +72,18 @@
             backdrop-filter: blur(12px);
             z-index: 1000;
             border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        nav { display: flex; justify-content: space-between; align-items: center; height: 70px; }
+        body.light-mode header {
+            background: rgba(245, 245, 245, 0.95);
+        }
+        nav { display: flex; justify-content: space-between; align-items: center; height: 70px; gap: 20px; }
         .logo { 
             font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
-            color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px;
+            color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px;
         }
         .logo span { color: var(--hazard-orange); }
-        .nav-links { display: flex; gap: 30px; }
+        .nav-links { display: flex; gap: 30px; align-items: center; margin-left: auto; }
         .nav-links a {
             color: var(--text-main); text-decoration: none; font-size: 0.85rem;
             font-weight: 600; text-transform: uppercase; transition: var(--transition);
@@ -82,6 +96,28 @@
         }
         .nav-links a:hover::after { width: 100%; }
         .menu-toggle { display: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            background: var(--hazard-orange);
+            border-color: var(--hazard-orange);
+            color: #ffffff;
+            transform: scale(1.1);
+        }
 
         /* Hero Section */
         #hero {
@@ -308,6 +344,7 @@
             .hero-title { font-size: 2.5rem; }
             .nav-links { display: none; }
             .menu-toggle { display: block; }
+            .theme-toggle { margin-left: auto; }
             .feature-row, .feature-row:nth-child(even) { flex-direction: column; gap: 30px; }
             .feature-visual { flex: 0 0 auto; width: 100%; }
             .point-flow { flex-direction: column; gap: 30px; }
@@ -493,6 +530,9 @@
                     <a href="#roadmap">Roadmap</a>
                     <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;">Laporkan</a>
                 </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
             </nav>
         </div>
     </header>
@@ -1093,6 +1133,54 @@
                 nav.style.padding = '20px';
                 nav.style.borderBottom = '1px solid #333';
             }
+        }
+
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        
+        if (themeToggle) {
+            const themeIcon = themeToggle.querySelector('i');
+            
+            if (!themeIcon) {
+                console.error('Theme toggle icon not found');
+            } else {
+                // Check for saved theme preference or default to dark mode
+                const currentTheme = localStorage.getItem('theme') || 'dark';
+                
+                // Function to update aria-label based on current theme
+                function updateAriaLabel(isLightMode) {
+                    themeToggle.setAttribute('aria-label', isLightMode ? 'Switch to dark mode' : 'Switch to light mode');
+                }
+                
+                // Apply saved theme on page load
+                if (currentTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    updateAriaLabel(true);
+                } else {
+                    updateAriaLabel(false);
+                }
+
+                // Toggle theme on button click
+                themeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('light-mode');
+                    
+                    if (document.body.classList.contains('light-mode')) {
+                        themeIcon.classList.remove('fa-moon');
+                        themeIcon.classList.add('fa-sun');
+                        localStorage.setItem('theme', 'light');
+                        updateAriaLabel(true);
+                    } else {
+                        themeIcon.classList.remove('fa-sun');
+                        themeIcon.classList.add('fa-moon');
+                        localStorage.setItem('theme', 'dark');
+                        updateAriaLabel(false);
+                    }
+                });
+            }
+        } else {
+            console.error('Theme toggle button not found');
         }
 
         // Helper function to get user-friendly error messages

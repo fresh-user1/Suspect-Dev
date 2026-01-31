@@ -704,33 +704,55 @@
             }
         }
 
-        // Mock Check Wallet Function
-        function checkWallet() {
+        // Helper function to get user-friendly error messages
+        function getErrorMessage(status, context = 'general') {
+            const messages = {
+                404: context === 'wallet' ? 'Wallet not found in database' : 'Resource not found',
+                400: 'Invalid data. Please check your inputs',
+                500: 'Server error occurred',
+                503: 'Service temporarily unavailable'
+            };
+            return messages[status] || 'HTTP error! status: ' + status;
+        }
+
+        // Async function to GET wallet data from API
+        async function checkWallet() {
             const input = document.getElementById('walletInput').value;
             const resultDiv = document.getElementById('checkResult');
             
             if (input.length < 10) {
-                alert('Masukkan address yang valid');
+                showNotification('Masukkan address yang valid', 'error');
                 return;
             }
 
+            // Show loading state
             resultDiv.style.display = 'block';
             resultDiv.style.borderColor = '#333';
-            resultDiv.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mencari di database lokal...';
+            resultDiv.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mencari di database...';
 
-            setTimeout(() => {
-                // Simulasi: 7xkx... adalah contoh scammer dari instruksi sebelumnya
-                if (input.includes('7xkx') || input.includes('7xkx9QxQmMaaXXPMvKdzsZ71dDsVDvPjCSkR9zEf9abc')) {
+            try {
+                // Fetch wallet data from API
+                const response = await fetch(`/api/wallet/${encodeURIComponent(input)}`);
+                
+                if (!response.ok) {
+                    throw new Error(getErrorMessage(response.status, 'wallet'));
+                }
+                
+                const data = await response.json();
+                
+                // Display results based on API response
+                if (data.isRisky || data.status === 'confirmed_scammer') {
                     resultDiv.style.borderColor = '#ff3333';
                     resultDiv.innerHTML = `
                         <div style="color: #ff3333; font-weight: bold; margin-bottom: 10px;">
                             <i class="fa-solid fa-triangle-exclamation"></i> HIGH RISK DETECTED
                         </div>
-                        <div>Status: Confirmed Scammer</div>
-                        <div>Insiden: 3 rugpull tercatat</div>
-                        <div>Total Loss: ~$142K USD</div>
-                        <div style="margin-top: 10px; color: #666;">Last active: 2024-02-03</div>
+                        <div>Status: ${data.status || 'Confirmed Scammer'}</div>
+                        <div>Insiden: ${data.incidents || 'N/A'}</div>
+                        <div>Total Loss: ${data.totalLoss || 'N/A'}</div>
+                        <div style="margin-top: 10px; color: #666;">Last active: ${data.lastActive || 'N/A'}</div>
                     `;
+                    showNotification('High risk wallet detected!', 'error');
                 } else {
                     resultDiv.style.borderColor = '#00ff00';
                     resultDiv.innerHTML = `
@@ -742,26 +764,137 @@
                             *Belum terdaftar ≠ Aman. Selalu lakukan riset tambahan.
                         </div>
                     `;
+                    showNotification('Wallet checked successfully', 'success');
                 }
-            }, 1000);
+            } catch (error) {
+                // Error handling
+                console.error('Error checking wallet:', error);
+                resultDiv.style.borderColor = '#ff9800';
+                resultDiv.innerHTML = `
+                    <div style="color: #ff9800; font-weight: bold; margin-bottom: 10px;">
+                        <i class="fa-solid fa-exclamation-circle"></i> ERROR
+                    </div>
+                    <div>Gagal terhubung ke API. Silakan coba lagi nanti.</div>
+                    <div style="color: #666; margin-top: 10px; font-size: 0.8rem;">
+                        Error: ${error.message}
+                    </div>
+                `;
+                showNotification('Failed to check wallet: ' + error.message, 'error');
+            }
         }
 
-        // Handle Report Submit
-        function handleReport(e) {
+        // Async function to POST report data to API
+        async function handleReport(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button');
             const originalHTML = btn.innerHTML;
+            const form = e.target;
             
+            // Get form data
+            const formData = {
+                walletAddress: form.querySelector('input[placeholder="Alamat wallet yang dicurigai"]').value,
+                transactionHash: form.querySelector('input[placeholder="Contoh: 5xkt... (Solscan link)"]').value,
+                projectToken: form.querySelector('input[placeholder="$TOKEN / Contract Address"]').value,
+                description: form.querySelector('textarea').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Show loading state
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
             btn.disabled = true;
 
-            setTimeout(() => {
-                alert('Laporan terkirim! Akan direview dalam 24-48 jam. Poin akan ditambahkan setelah verifikasi.');
+            try {
+                // POST report data to MongoDB via API
+                const response = await fetch('/api/reports', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(getErrorMessage(response.status, 'report'));
+                }
+
+                await response.json();
+                
+                // Success notification
+                showNotification('Laporan terkirim! Akan direview dalam 24-48 jam. Poin akan ditambahkan setelah verifikasi.', 'success');
+                form.reset();
+                
+            } catch (error) {
+                // Error handling
+                console.error('Error submitting report:', error);
+                showNotification('Gagal mengirim laporan: ' + error.message + '. Silakan coba lagi nanti.', 'error');
+            } finally {
+                // Restore button state
                 btn.innerHTML = originalHTML;
                 btn.disabled = false;
-                e.target.reset();
-            }, 1500);
+            }
         }
+
+        // Simple notification system
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingNotif = document.querySelector('.notification-toast');
+            if (existingNotif) {
+                existingNotif.remove();
+            }
+
+            // Color mapping for notification types
+            const colorMap = {
+                'success': { bg: '#00ff00', text: '#0a0a0a' },
+                'error': { bg: '#ff3333', text: '#fff' },
+                'info': { bg: '#ff9800', text: '#fff' }
+            };
+            
+            const colors = colorMap[type] || colorMap.info;
+
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification-toast';
+            notification.style.cssText = `
+                position: fixed;
+                top: 90px;
+                right: 20px;
+                padding: 16px 24px;
+                background: ${colors.bg};
+                color: ${colors.text};
+                border-radius: 4px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                font-family: var(--font-main);
+                font-size: 0.9rem;
+                font-weight: 600;
+                max-width: 400px;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Add CSS animations for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
 
         // Smooth scroll untuk anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

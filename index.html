@@ -68,16 +68,19 @@
         /* Header */
         header {
             position: fixed; top: 0; width: 100%;
-            background: var(--bg-color);
+            background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(12px);
             z-index: 1000;
             border-bottom: 1px solid var(--border-color);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+        body.light-mode header {
+            background: rgba(245, 245, 245, 0.95);
+        }
         nav { display: flex; justify-content: space-between; align-items: center; height: 70px; gap: 20px; }
         .logo { 
             font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
-            color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px;
+            color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px;
         }
         .logo span { color: var(--hazard-orange); }
         .nav-links { display: flex; gap: 30px; align-items: center; margin-left: auto; }

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suspected - Token Security Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #FF4500;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Prison bars effect */
+        .prison-bars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .prison-bar {
+            position: absolute;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(0,0,0,0.3) 0%, 
+                rgba(50,50,50,0.5) 50%, 
+                rgba(0,0,0,0.3) 100%);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Handcuff animation */
+        .handcuffs {
+            display: inline-block;
+            font-size: 48px;
+            animation: swing 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px var(--primary-color));
+        }
+
+        @keyframes swing {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        /* Custom input styling */
+        .prison-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--primary-color);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .prison-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* Button styling */
+        .check-button {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+        }
+
+        .check-button:hover {
+            background: #ff5722;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
+        }
+
+        .check-button:active {
+            transform: translateY(0);
+        }
+
+        /* Result display */
+        .result-box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #666;
+            min-height: 150px;
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .result-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-box.safe {
+            border-color: #00ff00;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+
+        .result-box.dangerous {
+            border-color: #ff0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Main container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Title animation */
+        .title {
+            color: var(--primary-color);
+            text-shadow: 0 0 20px rgba(255, 69, 0, 0.8),
+                         0 0 40px rgba(255, 69, 0, 0.4);
+            animation: flicker 3s ease-in-out infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+            75% { opacity: 0.95; }
+        }
+
+        /* Chain decoration */
+        .chain {
+            display: inline-block;
+            font-size: 24px;
+            color: #888;
+            margin: 0 10px;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scanning animation */
+        .scanning {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scanning::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 69, 0, 0.3), 
+                transparent);
+            animation: scan 1.5s linear infinite;
+        }
+
+        @keyframes scan {
+            to { left: 100%; }
+        }
+
+        /* Warning text animation */
+        .warning-text {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <!-- Prison bars effect -->
+    <div class="prison-bars">
+        <div class="prison-bar" style="left: 10%;"></div>
+        <div class="prison-bar" style="left: 25%;"></div>
+        <div class="prison-bar" style="left: 40%;"></div>
+        <div class="prison-bar" style="left: 55%;"></div>
+        <div class="prison-bar" style="left: 70%;"></div>
+        <div class="prison-bar" style="left: 85%;"></div>
+    </div>
+
+    <!-- Main container -->
+    <div class="main-container max-w-2xl w-full">
+        <!-- Title with handcuffs -->
+        <div class="text-center mb-8">
+            <div class="handcuffs">🔗</div>
+            <h1 class="title text-6xl font-bold mb-4">SUSPECTED</h1>
+            <p class="text-gray-400 text-lg">
+                <span class="chain">⛓️</span>
+                Token Security Checker
+                <span class="chain">⛓️</span>
+            </p>
+        </div>
+
+        <!-- Main card -->
+        <div class="bg-gray-900 rounded-lg p-8 shadow-2xl border-4" style="border-color: var(--primary-color);">
+            <!-- Input section -->
+            <div class="mb-6">
+                <label class="block text-gray-300 text-sm font-bold mb-3 uppercase tracking-wider" for="contractAddress">
+                    Enter Ethereum Contract Address
+                </label>
+                <input 
+                    class="prison-input w-full px-4 py-3 rounded-lg text-lg"
+                    id="contractAddress" 
+                    type="text" 
+                    placeholder="0x..."
+                    maxlength="42">
+            </div>
+
+            <!-- Button -->
+            <button 
+                class="check-button w-full py-4 px-6 rounded-lg text-lg mb-6"
+                onclick="checkToken()">
+                🔍 Check Token
+            </button>
+
+            <!-- Result display area -->
+            <div id="resultBox" class="result-box rounded-lg p-6 hidden">
+                <div id="resultContent"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8 text-gray-500 text-sm">
+            <p>⚠️ Stay safe in the crypto world ⚠️</p>
+        </div>
+    </div>
+
+    <script>
+        // Check token function
+        function checkToken() {
+            const address = document.getElementById('contractAddress').value.trim();
+            const resultBox = document.getElementById('resultBox');
+            const resultContent = document.getElementById('resultContent');
+
+            // Validate input
+            if (!address) {
+                alert('Please enter a contract address!');
+                return;
+            }
+
+            // Basic Ethereum address validation
+            if (!address.match(/^0x[a-fA-F0-9]{40}$/)) {
+                alert('Invalid Ethereum address format! Address should start with 0x followed by 40 hexadecimal characters (42 characters total).');
+                return;
+            }
+
+            // Show scanning alert
+            alert('Scanning...');
+
+            // Simulate scanning with a delay
+            setTimeout(() => {
+                // Random result for demonstration (in production, this would call an API)
+                const isSafe = Math.random() > 0.5;
+
+                // Show result box
+                resultBox.classList.remove('hidden', 'safe', 'dangerous');
+                resultBox.classList.add('show', 'scanning');
+
+                if (isSafe) {
+                    resultBox.classList.add('safe');
+                    resultContent.innerHTML = `
+                        <div class="warning-text">
+                            <div class="text-green-400 text-2xl font-bold mb-4">✅ SAFE TOKEN</div>
+                            <p class="text-green-300 mb-2">Contract Address: <code class="text-xs">${address}</code></p>
+                            <p class="text-gray-300">✓ No suspicious activity detected</p>
+                            <p class="text-gray-300">✓ Contract verified</p>
+                            <p class="text-gray-300">✓ No red flags found</p>
+                        </div>
+                    `;
+                } else {
+                    resultBox.classList.add('dangerous');
+                    resultContent.innerHTML = `
+                        <div class="warning-text">
+                            <div class="text-red-400 text-2xl font-bold mb-4">⚠️ DANGEROUS TOKEN</div>
+                            <p class="text-red-300 mb-2">Contract Address: <code class="text-xs">${address}</code></p>
+                            <p class="text-gray-300">✗ Suspicious activity detected</p>
+                            <p class="text-gray-300">✗ Potential honeypot</p>
+                            <p class="text-gray-300">✗ High risk - Do not trade!</p>
+                        </div>
+                    `;
+                }
+
+                // Remove scanning animation after display
+                setTimeout(() => {
+                    resultBox.classList.remove('scanning');
+                }, 1500);
+            }, 800);
+        }
+
+        // Allow Enter key to trigger check
+        document.getElementById('contractAddress').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkToken();
+            }
+        });
+
+        // Animation is already handled by CSS classes
+    </script>
+</body>
+</html>

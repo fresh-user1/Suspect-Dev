@@ -267,7 +267,7 @@
 
             // Basic Ethereum address validation
             if (!address.match(/^0x[a-fA-F0-9]{40}$/)) {
-                alert('Invalid Ethereum address format! Address should start with 0x and be 42 characters long.');
+                alert('Invalid Ethereum address format! Address should start with 0x followed by 40 hexadecimal characters (42 characters total).');
                 return;
             }
 
@@ -321,20 +321,7 @@
             }
         });
 
-        // Add floating animation to handcuffs on page load
-        window.addEventListener('load', () => {
-            const handcuffs = document.querySelector('.handcuffs');
-            handcuffs.style.animation = 'swing 2s ease-in-out infinite';
-        });
-
-        // Add hover effect to input
-        const input = document.getElementById('contractAddress');
-        input.addEventListener('focus', () => {
-            input.parentElement.style.transform = 'scale(1.01)';
-        });
-        input.addEventListener('blur', () => {
-            input.parentElement.style.transform = 'scale(1)';
-        });
+        // Animation is already handled by CSS classes
     </script>
 </body>
 </html>

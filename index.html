@@ -115,7 +115,7 @@
         .theme-toggle:hover {
             background: var(--hazard-orange);
             border-color: var(--hazard-orange);
-            color: #fff;
+            color: #ffffff;
             transform: scale(1.1);
         }
 
@@ -1137,32 +1137,51 @@
 
         // Theme Toggle Functionality
         const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = themeToggle.querySelector('i');
-
-        // Check for saved theme preference or default to dark mode
-        const currentTheme = localStorage.getItem('theme') || 'dark';
         
-        // Apply saved theme on page load
-        if (currentTheme === 'light') {
-            document.body.classList.add('light-mode');
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-        }
-
-        // Toggle theme on button click
-        themeToggle.addEventListener('click', function() {
-            document.body.classList.toggle('light-mode');
+        if (themeToggle) {
+            const themeIcon = themeToggle.querySelector('i');
             
-            if (document.body.classList.contains('light-mode')) {
-                themeIcon.classList.remove('fa-moon');
-                themeIcon.classList.add('fa-sun');
-                localStorage.setItem('theme', 'light');
+            if (!themeIcon) {
+                console.error('Theme toggle icon not found');
             } else {
-                themeIcon.classList.remove('fa-sun');
-                themeIcon.classList.add('fa-moon');
-                localStorage.setItem('theme', 'dark');
+                // Check for saved theme preference or default to dark mode
+                const currentTheme = localStorage.getItem('theme') || 'dark';
+                
+                // Function to update aria-label based on current theme
+                function updateAriaLabel(isLightMode) {
+                    themeToggle.setAttribute('aria-label', isLightMode ? 'Switch to dark mode' : 'Switch to light mode');
+                }
+                
+                // Apply saved theme on page load
+                if (currentTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    updateAriaLabel(true);
+                } else {
+                    updateAriaLabel(false);
+                }
+
+                // Toggle theme on button click
+                themeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('light-mode');
+                    
+                    if (document.body.classList.contains('light-mode')) {
+                        themeIcon.classList.remove('fa-moon');
+                        themeIcon.classList.add('fa-sun');
+                        localStorage.setItem('theme', 'light');
+                        updateAriaLabel(true);
+                    } else {
+                        themeIcon.classList.remove('fa-sun');
+                        themeIcon.classList.add('fa-moon');
+                        localStorage.setItem('theme', 'dark');
+                        updateAriaLabel(false);
+                    }
+                });
             }
-        });
+        } else {
+            console.error('Theme toggle button not found');
+        }
 
         // Helper function to get user-friendly error messages
         function getErrorMessage(status, context = 'general') {

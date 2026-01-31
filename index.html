@@ -318,6 +318,158 @@
         /* Animations */
         .fade-in { animation: fadeIn 0.8s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Scammer Wallet Cards Styles */
+        .scammer-wallet-card {
+            background: linear-gradient(to right, #111111, #000000);
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        .scammer-wallet-card:hover {
+            border-color: #ef4444;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+        }
+        .wallet-card-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+        }
+        .serial-number-box {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(to bottom right, #dc2626, #991b1b);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .serial-number {
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .wallet-card-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .wallet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+        }
+        .wallet-address-section {
+            flex: 1;
+            min-width: 0;
+        }
+        .wallet-label {
+            color: #9ca3af;
+            font-size: 11px;
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .wallet-address {
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .status-badge {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-badge i {
+            margin-right: 4px;
+            font-size: 10px;
+        }
+        .status-confirmed {
+            background: rgba(127, 29, 29, 0.5);
+            color: #fca5a5;
+            border: 1px solid #b91c1c;
+        }
+        .status-suspicious {
+            background: rgba(124, 45, 18, 0.5);
+            color: #fdba74;
+            border: 1px solid #c2410c;
+        }
+        .risk-score-section {
+            margin-bottom: 16px;
+        }
+        .risk-score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .risk-score-label {
+            color: #9ca3af;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+        }
+        .risk-score-value {
+            color: #f87171;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #1f2937;
+            border-radius: 9999px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: linear-gradient(to right, #dc2626, #ef4444);
+            height: 100%;
+            border-radius: 9999px;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+        .victims-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .victims-icon {
+            color: #f87171;
+            font-size: 11px;
+        }
+        .victims-label {
+            color: #9ca3af;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+        }
+        .victims-amount {
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .max-w-5xl {
+            max-width: 1024px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .mt-12 {
+            margin-top: 48px;
+        }
     </style>
 </head>
 <body>
@@ -412,6 +564,245 @@
                     </div>
                     <div class="feature-visual">
                         <i class="fa-solid fa-fingerprint" style="opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Scammer Wallets Section -->
+    <section id="scammer-wallets" class="section-padding" style="background: var(--bg-color);">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Latest Scammer Wallets</h2>
+                <p>
+                    Registry terbaru dari wallet yang teridentifikasi melakukan aktivitas mencurigakan atau terkonfirmasi sebagai scammer.
+                </p>
+            </div>
+
+            <div class="max-w-5xl mt-12">
+                <!-- Scammer Wallet Card 1 -->
+                <div class="scammer-wallet-card">
+                    <div class="wallet-card-container">
+                        <!-- Serial Number -->
+                        <div class="serial-number-box">
+                            <span class="serial-number">01</span>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="wallet-card-content">
+                            <!-- Wallet Address and Badge -->
+                            <div class="wallet-header">
+                                <div class="wallet-address-section">
+                                    <p class="wallet-label">WALLET ADDRESS</p>
+                                    <p class="wallet-address">7xKjT9q4PeR3mNvWxYz8dL2aB5cF6gH1iJ3kL4mN5oP6qR7sT8</p>
+                                </div>
+                                <div>
+                                    <span class="status-badge status-confirmed">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        Confirmed
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Risk Score -->
+                            <div class="risk-score-section">
+                                <div class="risk-score-header">
+                                    <span class="risk-score-label">RISK SCORE</span>
+                                    <span class="risk-score-value">98/100</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 98%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Victims Info -->
+                            <div class="victims-info">
+                                <i class="fa-solid fa-dollar-sign victims-icon"></i>
+                                <span class="victims-label">VICTIMS LOSS:</span>
+                                <span class="victims-amount">$487,200 USD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scammer Wallet Card 2 -->
+                <div class="scammer-wallet-card">
+                    <div class="wallet-card-container">
+                        <!-- Serial Number -->
+                        <div class="serial-number-box">
+                            <span class="serial-number">02</span>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="wallet-card-content">
+                            <!-- Wallet Address and Badge -->
+                            <div class="wallet-header">
+                                <div class="wallet-address-section">
+                                    <p class="wallet-label">WALLET ADDRESS</p>
+                                    <p class="wallet-address">9aB2cD3eF4gH5iJ6kL7mN8oP9qR1sT2uV3wX4yZ5aB6cD7eF8</p>
+                                </div>
+                                <div>
+                                    <span class="status-badge status-suspicious">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        Suspicious
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Risk Score -->
+                            <div class="risk-score-section">
+                                <div class="risk-score-header">
+                                    <span class="risk-score-label">RISK SCORE</span>
+                                    <span class="risk-score-value">85/100</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 85%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Victims Info -->
+                            <div class="victims-info">
+                                <i class="fa-solid fa-dollar-sign victims-icon"></i>
+                                <span class="victims-label">VICTIMS LOSS:</span>
+                                <span class="victims-amount">$312,500 USD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scammer Wallet Card 3 -->
+                <div class="scammer-wallet-card">
+                    <div class="wallet-card-container">
+                        <!-- Serial Number -->
+                        <div class="serial-number-box">
+                            <span class="serial-number">03</span>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="wallet-card-content">
+                            <!-- Wallet Address and Badge -->
+                            <div class="wallet-header">
+                                <div class="wallet-address-section">
+                                    <p class="wallet-label">WALLET ADDRESS</p>
+                                    <p class="wallet-address">4cD5eF6gH7iJ8kL9mN1oP2qR3sT4uV5wX6yZ7aB8cD9eF1gH2</p>
+                                </div>
+                                <div>
+                                    <span class="status-badge status-confirmed">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        Confirmed
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Risk Score -->
+                            <div class="risk-score-section">
+                                <div class="risk-score-header">
+                                    <span class="risk-score-label">RISK SCORE</span>
+                                    <span class="risk-score-value">92/100</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 92%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Victims Info -->
+                            <div class="victims-info">
+                                <i class="fa-solid fa-dollar-sign victims-icon"></i>
+                                <span class="victims-label">VICTIMS LOSS:</span>
+                                <span class="victims-amount">$658,900 USD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scammer Wallet Card 4 -->
+                <div class="scammer-wallet-card">
+                    <div class="wallet-card-container">
+                        <!-- Serial Number -->
+                        <div class="serial-number-box">
+                            <span class="serial-number">04</span>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="wallet-card-content">
+                            <!-- Wallet Address and Badge -->
+                            <div class="wallet-header">
+                                <div class="wallet-address-section">
+                                    <p class="wallet-label">WALLET ADDRESS</p>
+                                    <p class="wallet-address">6eF7gH8iJ9kL1mN2oP3qR4sT5uV6wX7yZ8aB9cD1eF2gH3iJ4</p>
+                                </div>
+                                <div>
+                                    <span class="status-badge status-suspicious">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        Suspicious
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Risk Score -->
+                            <div class="risk-score-section">
+                                <div class="risk-score-header">
+                                    <span class="risk-score-label">RISK SCORE</span>
+                                    <span class="risk-score-value">78/100</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 78%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Victims Info -->
+                            <div class="victims-info">
+                                <i class="fa-solid fa-dollar-sign victims-icon"></i>
+                                <span class="victims-label">VICTIMS LOSS:</span>
+                                <span class="victims-amount">$195,750 USD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scammer Wallet Card 5 -->
+                <div class="scammer-wallet-card">
+                    <div class="wallet-card-container">
+                        <!-- Serial Number -->
+                        <div class="serial-number-box">
+                            <span class="serial-number">05</span>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="wallet-card-content">
+                            <!-- Wallet Address and Badge -->
+                            <div class="wallet-header">
+                                <div class="wallet-address-section">
+                                    <p class="wallet-label">WALLET ADDRESS</p>
+                                    <p class="wallet-address">2gH3iJ4kL5mN6oP7qR8sT9uV1wX2yZ3aB4cD5eF6gH7iJ8kL9</p>
+                                </div>
+                                <div>
+                                    <span class="status-badge status-confirmed">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        Confirmed
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Risk Score -->
+                            <div class="risk-score-section">
+                                <div class="risk-score-header">
+                                    <span class="risk-score-label">RISK SCORE</span>
+                                    <span class="risk-score-value">95/100</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 95%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Victims Info -->
+                            <div class="victims-info">
+                                <i class="fa-solid fa-dollar-sign victims-icon"></i>
+                                <span class="victims-label">VICTIMS LOSS:</span>
+                                <span class="victims-amount">$823,400 USD</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

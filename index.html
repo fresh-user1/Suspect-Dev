@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUSPECTED.LABELS — On-Chain Risk Registry</title>
+    <meta name="description" content="Registry eksperimental untuk tracking pola on-chain yang mencurigakan di jaringan Solana. Masih dalam tahap pengembangan aktif.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- CSS BASE DARI REFERENSI (Disesuaikan) --- */
+        :root {
+            --bg-color: #0a0a0a;
+            --bg-secondary: #111111;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            --hazard-orange: #FF4500; /* Warna utama request */
+            --hazard-dim: #cc3700;
+            --cctv-green: #00ff00;
+            --alert-red: #ff3333;
+            --border-color: #2a2a2a;
+            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Courier New', 'Consolas', monospace;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Efek Noise & Scanline */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px; pointer-events: none; z-index: 9998; opacity: 0.3;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .section-padding { padding: 100px 0; }
+        
+        /* Typography */
+        .text-orange { color: var(--hazard-orange); }
+        .text-muted { color: var(--text-muted); }
+        .font-mono { font-family: var(--font-mono); }
+        
+        /* Header */
+        header {
+            position: fixed; top: 0; width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+        nav { display: flex; justify-content: space-between; align-items: center; height: 70px; }
+        .logo { 
+            font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+            color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px;
+        }
+        .logo span { color: var(--hazard-orange); }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: var(--text-main); text-decoration: none; font-size: 0.85rem;
+            font-weight: 600; text-transform: uppercase; transition: var(--transition);
+            position: relative;
+        }
+        .nav-links a:hover { color: var(--hazard-orange); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--hazard-orange); transition: var(--transition);
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .menu-toggle { display: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; }
+
+        /* Hero Section */
+        #hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding-top: 70px; position: relative;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.1) 0%, rgba(0,0,0,0) 70%);
+        }
+        .hero-content { text-align: center; max-width: 800px; padding: 0 20px; }
+        .badge-beta {
+            display: inline-block; border: 1px solid var(--hazard-orange); color: var(--hazard-orange);
+            padding: 4px 12px; font-family: var(--font-mono); font-size: 0.75rem; 
+            margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .hero-title {
+            font-size: 3.5rem; font-weight: 900; text-transform: uppercase; 
+            letter-spacing: 3px; margin-bottom: 20px; line-height: 1.1;
+            background: linear-gradient(to bottom, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-subtitle {
+            font-size: 1.1rem; color: var(--text-muted); margin-bottom: 10px;
+            font-family: var(--font-mono);
+        }
+        .hero-disclaimer {
+            font-size: 0.8rem; color: #666; font-family: var(--font-mono);
+            margin-bottom: 40px; font-style: italic;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px;
+            font-weight: 600; text-transform: uppercase; text-decoration: none;
+            cursor: pointer; transition: var(--transition); border: 1px solid transparent;
+            font-size: 0.85rem; letter-spacing: 1px;
+        }
+        .btn-primary { 
+            background-color: var(--hazard-orange); color: #fff; 
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+        }
+        .btn-primary:hover { background-color: var(--hazard-dim); transform: translateY(-2px); }
+        .btn-outline { 
+            background-color: transparent; border: 1px solid var(--border-color); 
+            color: var(--text-main); 
+        }
+        .btn-outline:hover { border-color: var(--hazard-orange); color: var(--hazard-orange); }
+
+        /* Section Styling */
+        .section-title {
+            font-size: 2rem; text-transform: uppercase; margin-bottom: 20px;
+            border-left: 4px solid var(--hazard-orange); padding-left: 20px;
+            display: inline-block;
+        }
+        .section-header {
+            text-align: center; margin-bottom: 60px;
+        }
+        .section-header p {
+            max-width: 600px; margin: 0 auto; color: var(--text-muted);
+        }
+
+        /* Cards */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color);
+            padding: 30px; transition: var(--transition); position: relative;
+        }
+        .card:hover { 
+            border-color: var(--hazard-orange); 
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.1);
+        }
+        .card-icon {
+            font-size: 2rem; color: var(--hazard-orange); margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        .card h3 {
+            font-size: 1.1rem; text-transform: uppercase; margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .card p {
+            font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;
+        }
+
+        /* About/Differentiation Section */
+        .feature-row {
+            display: flex; align-items: center; gap: 50px; margin-bottom: 60px;
+        }
+        .feature-row:nth-child(even) { flex-direction: row-reverse; }
+        .feature-content { flex: 1; }
+        .feature-visual { 
+            flex: 0 0 300px; height: 200px; border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(255,69,0,0.1) 0%, transparent 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-mono); color: var(--hazard-orange); font-size: 3rem;
+        }
+        .feature-list {
+            list-style: none; margin-top: 20px;
+        }
+        .feature-list li {
+            padding: 10px 0; border-bottom: 1px solid #222;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.9rem; color: #aaa;
+        }
+        .feature-list li::before {
+            content: '>'; color: var(--hazard-orange); font-weight: bold;
+        }
+
+        /* Point System Section */
+        #point-system { background: var(--bg-secondary); border-top: 1px solid #222; border-bottom: 1px solid #222; }
+        .point-flow {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 900px; margin: 50px auto; position: relative;
+        }
+        .point-step {
+            text-align: center; flex: 1; position: relative; z-index: 2;
+        }
+        .step-number {
+            width: 60px; height: 60px; border: 2px solid var(--hazard-orange);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px; font-family: var(--font-mono); font-weight: bold;
+            font-size: 1.2rem; background: var(--bg-color);
+        }
+        .point-step h4 { font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
+        .point-step p { font-size: 0.8rem; color: #666; padding: 0 10px; }
+        
+        .connector {
+            position: absolute; top: 30px; left: 20%; right: 20%; height: 2px;
+            background: linear-gradient(to right, var(--hazard-orange), transparent, var(--hazard-orange));
+            z-index: 1;
+        }
+
+        .formula-box {
+            background: #000; border: 1px solid var(--border-color);
+            padding: 30px; text-align: center; margin-top: 40px;
+            font-family: var(--font-mono);
+        }
+        .formula {
+            font-size: 1.2rem; color: var(--hazard-orange); margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        /* Roadmap Section */
+        .roadmap-container {
+            position: relative; max-width: 800px; margin: 0 auto;
+        }
+        .roadmap-line {
+            position: absolute; left: 20px; top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(to bottom, var(--hazard-orange), transparent);
+        }
+        .roadmap-item {
+            position: relative; padding-left: 60px; margin-bottom: 50px;
+            opacity: 0.6; transition: var(--transition);
+        }
+        .roadmap-item:hover { opacity: 1; }
+        .roadmap-item.active { opacity: 1; }
+        .roadmap-item.active .roadmap-dot { background: var(--hazard-orange); box-shadow: 0 0 10px var(--hazard-orange); }
+        .roadmap-dot {
+            position: absolute; left: 11px; top: 5px; width: 20px; height: 20px;
+            border: 2px solid var(--hazard-orange); border-radius: 50%;
+            background: var(--bg-color);
+        }
+        .roadmap-phase {
+            font-family: var(--font-mono); font-size: 0.8rem; color: var(--hazard-orange);
+            margin-bottom: 5px; text-transform: uppercase;
+        }
+        .roadmap-title {
+            font-size: 1.2rem; text-transform: uppercase; margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .roadmap-desc {
+            color: #666; font-size: 0.9rem; line-height: 1.6;
+        }
+        .roadmap-list {
+            margin-top: 10px; padding-left: 20px; color: #888; font-size: 0.85rem;
+        }
+        .roadmap-list li { margin-bottom: 5px; }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block; padding: 2px 8px; font-size: 0.7rem;
+            border: 1px solid; margin-left: 10px; vertical-align: middle;
+        }
+        .status-wip { border-color: var(--hazard-orange); color: var(--hazard-orange); }
+        .status-plan { border-color: #444; color: #666; }
+        .status-done { border-color: var(--cctv-green); color: var(--cctv-green); }
+
+        /* Report Form */
+        .form-box {
+            max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color); padding: 40px;
+        }
+        .form-group { margin-bottom: 25px; }
+        .form-label {
+            display: block; margin-bottom: 8px; font-family: var(--font-mono);
+            font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;
+        }
+        .form-control {
+            width: 100%; background: #080808; border: 1px solid #333;
+            color: #fff; padding: 14px; font-family: var(--font-mono);
+            font-size: 0.9rem; transition: var(--transition);
+        }
+        .form-control:focus { 
+            outline: none; border-color: var(--hazard-orange); 
+            box-shadow: 0 0 10px rgba(255,69,0,0.1);
+        }
+
+        /* Footer */
+        footer { 
+            background: #050505; padding: 60px 0 30px; 
+            border-top: 1px solid var(--border-color); text-align: center;
+        }
+        .footer-links { margin: 20px 0; }
+        .footer-links a { 
+            color: #555; margin: 0 15px; font-size: 1.2rem; transition: var(--transition);
+        }
+        .footer-links a:hover { color: var(--hazard-orange); }
+        .disclaimer {
+            font-size: 0.7rem; color: #444; font-family: var(--font-mono);
+            max-width: 600px; margin: 30px auto 0; line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .nav-links { display: none; }
+            .menu-toggle { display: block; }
+            .feature-row, .feature-row:nth-child(even) { flex-direction: column; gap: 30px; }
+            .feature-visual { flex: 0 0 auto; width: 100%; }
+            .point-flow { flex-direction: column; gap: 30px; }
+            .connector { display: none; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.8s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="scanlines"></div>
+
+    <!-- Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    SUSPECTED<span>.LABELS</span>
+                </a>
+                <div class="menu-toggle" onclick="toggleMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+                <div class="nav-links" id="navLinks">
+                    <a href="#about">Tentang</a>
+                    <a href="#point-system">Point System</a>
+                    <a href="#roadmap">Roadmap</a>
+                    <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;">Laporkan</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="hero-content fade-in">
+            <div class="badge-beta">Experimental Build v0.1</div>
+            <h1 class="hero-title">On-Chain Risk Registry</h1>
+            <p class="hero-subtitle">Database publik wallet developer yang mencurigakan di Solana</p>
+            <p class="hero-disclaimer">
+                *Platform masih dalam tahap pengembangan aktif. Data yang ditampilkan bersifat preliminary dan memerlukan verifikasi komunitas.
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="#check" class="btn btn-primary">
+                    <i class="fa-solid fa-magnifying-glass"></i> Cek Wallet
+                </a>
+                <a href="#about" class="btn btn-outline">
+                    <i class="fa-solid fa-circle-info"></i> Pelajari
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section: Apa ini & Keunggulan -->
+    <section id="about" class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" style="border: none; display: inline-block;">Apa Ini?</h2>
+                <p>
+                    SUSPECTED.LABELS adalah registry eksperimental yang mencoba memetakan pola transaksi mencurigakan dan histori wallet developer di ekosistem Solana. Bukan alat investasi, melainkan infrastruktur transparansi.
+                </p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-database"></i></div>
+                    <h3>On-Chain Native</h3>
+                    <p>Semua data bersumber dari blockchain Solana yang publik. Tidak ada data rahasia atau insider information.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+                    <h3>Crowdsourced</h3>
+                    <p>Komunitas dapat mengajukan bukti transaksi (tx hash) yang kemudian diverifikasi bersama, bukan sentralisasi otoritas tunggal.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-code-branch"></i></div>
+                    <h3>Open Structure</h3>
+                    <p>Struktur data dirancang agar bisa di-integrasikan wallet lain via API. Bukan walled garden.</p>
+                </div>
+            </div>
+
+            <!-- Differentiation -->
+            <div style="margin-top: 100px;">
+                <div class="feature-row">
+                    <div class="feature-content">
+                        <h3 style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px; color: #fff;">
+                            Bedanya dengan Platform Lain?
+                        </h3>
+                        <p style="color: #888; margin-bottom: 20px;">
+                            Banyak scanner yang fokus pada kontrak token (honeypot, mint authority). Kami fokus pada <strong>actorbehaviour</strong> — pola historis wallet developer yang sama terulang di berbagai project.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Tracking cross-project (wallet yang sama di token berbeda)</li>
+                            <li>Fokus pada liquidity drain pattern, bukan sekadar code audit</li>
+                            <li>Sistem reputasi validator terbuka (siapapun bisa jadi verifier)</li>
+                            <li>Tidak ada "pay to remove" label — transparansi mutlak</li>
+                        </ul>
+                    </div>
+                    <div class="feature-visual">
+                        <i class="fa-solid fa-fingerprint" style="opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Point System Section -->
+    <section id="point-system" class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Point & Incentive System</h2>
+                <p>
+                    Mekanisme awal untuk membangun database: Kontributor yang memberikan bukti valid akan mendapatkan poin yang nantinya menjadi parameter alokasi reward.
+                </p>
+            </div>
+
+            <div class="point-flow">
+                <div class="connector"></div>
+                
+                <div class="point-step">
+                    <div class="step-number">01</div>
+                    <h4>Submit Bukti</h4>
+                    <p>Laporkan wallet dev + tx hash rugpull</p>
+                </div>
+                
+                <div class="point-step">
+                    <div class="step-number">02</div>
+                    <h4>Verifikasi</h4>
+                    <p>Validator komunitas cek validitas on-chain</p>
+                </div>
+                
+                <div class="point-step">
+                    <div class="step-number">03</div>
+                    <h4>Dapat Poin</h4>
+                    <p>Point masuk ke akun contributor</p>
+                </div>
+                
+                <div class="point-step">
+                    <div class="step-number">04</div>
+                    <h4>Airdrop Allocation</h4>
+                    <p>Poin + Token Hold = Alokasi</p>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                <div style="margin-bottom: 20px; color: #666; font-size: 0.8rem;">FORMULA ALLOCATION (KONSEP AWAL)</div>
+                <div class="formula">
+                    (Total Poin Kontribusi × Weight) + (Avg Token Hold × Duration) = Allocation Score
+                </div>
+                <p style="color: #444; font-size: 0.8rem; margin-top: 10px;">
+                    *Detail matematis dan smart contract distribution masih dalam pengembangan. Tidak menjanjikan nilai moneter spesifik.
+                </p>
+            </div>
+
+            <div class="grid-2" style="margin-top: 50px;">
+                <div class="card">
+                    <h3 style="color: var(--hazard-orange); margin-bottom: 15px;">
+                        <i class="fa-solid fa-upload"></i> Cara Submit
+                    </h3>
+                    <p style="font-size: 0.85rem; line-height: 1.8; color: #aaa;">
+                        1. Temukan tx hash penarikan likuiditas (liquidity removal)<br>
+                        2. Copy wallet address developer<br>
+                        3. Isi form dengan evidence link (Solscan)<br>
+                        4. Tunggu verifikasi 24-48 jam<br>
+                        5. Poin masuk otomatis setelah approved
+                    </p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--cctv-green); margin-bottom: 15px;">
+                        <i class="fa-solid fa-shield-halved"></i> Anti-Gaming
+                    </h3>
+                    <p style="font-size: 0.85rem; line-height: 1.8; color: #aaa;">
+                        - Minimal holding token 7 hari untuk eligible airdrop<br>
+                        - Sybil resistance via on-chain activity check<br>
+                        - False report akan mengurangi reputasi (bukan poin)<br>
+                        - Multi-wallet detection otomatis
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section (Multi-Fase) -->
+    <section id="roadmap" class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Development Roadmap</h2>
+                <p>
+                    Proyek ini kompleks dan memerlukan fase pengembangan panjang. Tidak ada janji "moon" dalam 3 bulan.
+                </p>
+            </div>
+
+            <div class="roadmap-container">
+                <div class="roadmap-line"></div>
+
+                <!-- Fase 1 -->
+                <div class="roadmap-item active">
+                    <div class="roadmap-dot"></div>
+                    <div class="roadmap-phase">Fase 01 — Q1 2025</div>
+                    <div class="roadmap-title">
+                        MVP & Data Seeding
+                        <span class="status-badge status-wip">In Progress</span>
+                    </div>
+                    <div class="roadmap-desc">
+                        Landing page statis, form submission manual, kurasi data 50-100 kasus historis secara manual oleh tim inti.
+                    </div>
+                    <ul class="roadmap-list">
+                        <li>Frontend HTML/CSS/JS (current)</li>
+                        <li>Database MongoDB setup</li>
+                        <li>Manual verification system</li>
+                        <li>Community onboarding (Twitter/X)</li>
+                    </ul>
+                </div>
+
+                <!-- Fase 2 -->
+                <div class="roadmap-item">
+                    <div class="roadmap-dot"></div>
+                    <div class="roadmap-phase">Fase 02 — Q2 2025</div>
+                    <div class="roadmap-title">
+                        Blockchair Integration
+                        <span class="status-badge status-plan">Planned</span>
+                    </div>
+                    <div class="roadmap-desc">
+                        Integrasi API Blockchair untuk otomatisasi tracing wallet dan deteksi pattern LP removal secara algoritmik.
+                    </div>
+                    <ul class="roadmap-list">
+                        <li>Automated wallet clustering</li>
+                        <li>Risk scoring algorithm v1</li>
+                        <li>Browser extension beta (Phantom)</li>
+                        <li>Point system smart contract (Solana)</li>
+                    </ul>
+                </div>
+
+                <!-- Fase 3 -->
+                <div class="roadmap-item">
+                    <div class="roadmap-dot"></div>
+                    <div class="roadmap-phase">Fase 03 — Q3 2025</div>
+                    <div class="roadmap-title">
+                        Decentralized Verification
+                        <span class="status-badge status-plan">Planned</span>
+                    </div>
+                    <div class="roadmap-desc">
+                        Sistem staking token untuk menjadi validator. Mekanisme voting on-chain untuk status "Confirmed" vs "Disputed".
+                    </div>
+                    <ul class="roadmap-list">
+                        <li>Validator staking mechanism</li>
+                        <li>Dispute resolution court</li>
+                        <li>Governance token launch (jika diperlukan)</li>
+                        <li>API public untuk integrasi wallet</li>
+                    </ul>
+                </div>
+
+                <!-- Fase 4 -->
+                <div class="roadmap-item">
+                    <div class="roadmap-dot"></div>
+                    <div class="roadmap-phase">Fase 04 — Q4 2025</div>
+                    <div class="roadmap-title">
+                        Cross-Chain & AI Analysis
+                        <span class="status-badge status-plan">Research</span>
+                    </div>
+                    <div class="roadmap-desc">
+                        Ekspansi ke jaringan EVM (Base, ETH) dan implementasi machine learning untuk deteksi pattern anomali otomatis.
+                    </div>
+                    <ul class="roadmap-list">
+                        <li>Multi-chain support (Base, ETH)</li>
+                        <li>ML-based anomaly detection</li>
+                        <li>Mobile app (React Native)</li>
+                        <li>Partnership dengan wallet besar</li>
+                    </ul>
+                </div>
+
+                <!-- Fase 5 -->
+                <div class="roadmap-item">
+                    <div class="roadmap-dot"></div>
+                    <div class="roadmap-phase">Fase 05 — 2026+</div>
+                    <div class="roadmap-title">
+                        Autonomous Registry
+                        <span class="status-badge status-plan">Vision</span>
+                    </div>
+                    <div class="roadmap-desc">
+                        DAO sepenuhnya yang mengelola registry tanpa tim inti. Incentivized data correction dan self-sustaining economic model.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simple Check Wallet Section -->
+    <section id="check" class="section-padding" style="background: var(--bg-secondary);">
+        <div class="container" style="max-width: 600px;">
+            <div class="text-center" style="margin-bottom: 40px;">
+                <h2 class="section-title" style="border: none; display: inline-block;">Cek Wallet</h2>
+                <p style="color: #666; font-size: 0.9rem;">Database masih terbatas (alpha)</p>
+            </div>
+            
+            <div class="form-box">
+                <div class="form-group">
+                    <label class="form-label">Solana Wallet Address</label>
+                    <input type="text" class="form-control" placeholder="7xkx... atau 44 karakter full address" id="walletInput">
+                </div>
+                <button onclick="checkWallet()" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                    <i class="fa-solid fa-search"></i> Scan Database
+                </button>
+                <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid #333; display: none; font-family: var(--font-mono); font-size: 0.85rem;">
+                    <!-- Result akan muncul di sini -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Report Section -->
+    <section id="report" class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Submit Evidence</h2>
+                <p>Laporkan bukti rugpull untuk mendapatkan poin kontribusi</p>
+            </div>
+            
+            <div class="form-box">
+                <form id="reportForm" onsubmit="handleReport(event)">
+                    <div class="form-group">
+                        <label class="form-label">Developer Wallet Address</label>
+                        <input type="text" class="form-control" required placeholder="Alamat wallet yang dicurigai">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Transaction Hash (Bukti)</label>
+                        <input type="text" class="form-control" required placeholder="Contoh: 5xkt... (Solscan link)">
+                        <small style="color: #444; font-size: 0.75rem;">Paste link Solscan atau tx hash lengkap</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Project Token (Opsional)</label>
+                        <input type="text" class="form-control" placeholder="$TOKEN / Contract Address">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Keterangan Singkat</label>
+                        <textarea class="form-control" rows="3" placeholder="Jelaskan pola yang ditemukan..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                        <i class="fa-solid fa-paper-plane"></i> Submit untuk Review
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="logo" style="justify-content: center; margin-bottom: 20px;">
+                SUSPECTED<span>.LABELS</span>
+            </div>
+            <div class="footer-links">
+                <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-github"></i></a>
+                <a href="#"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+            <div class="disclaimer">
+                <p>
+                    SUSPECTED.LABELS adalah proyek eksperimental. Data disediakan "sebagaimana adanya" tanpa jaminan akurasi 100%. 
+                    Platform ini bukan nasihat investasi dan tidak bertanggung jawab atas keputusan finansial pengguna. 
+                    Always DYOR (Do Your Own Research).
+                </p>
+                <p style="margin-top: 10px;">
+                    © 2025 Suspected Labs. Open Source di bawah MIT License.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle Mobile Menu
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            if (nav.style.display === 'flex') {
+                nav.style.display = 'none';
+            } else {
+                nav.style.display = 'flex';
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '70px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = 'rgba(10,10,10,0.98)';
+                nav.style.padding = '20px';
+                nav.style.borderBottom = '1px solid #333';
+            }
+        }
+
+        // Mock Check Wallet Function
+        function checkWallet() {
+            const input = document.getElementById('walletInput').value;
+            const resultDiv = document.getElementById('checkResult');
+            
+            if (input.length < 10) {
+                alert('Masukkan address yang valid');
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.style.borderColor = '#333';
+            resultDiv.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mencari di database lokal...';
+
+            setTimeout(() => {
+                // Simulasi: 7xkx... adalah contoh scammer dari instruksi sebelumnya
+                if (input.includes('7xkx') || input.includes('7xkx9QxQmMaaXXPMvKdzsZ71dDsVDvPjCSkR9zEf9abc')) {
+                    resultDiv.style.borderColor = '#ff3333';
+                    resultDiv.innerHTML = `
+                        <div style="color: #ff3333; font-weight: bold; margin-bottom: 10px;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> HIGH RISK DETECTED
+                        </div>
+                        <div>Status: Confirmed Scammer</div>
+                        <div>Insiden: 3 rugpull tercatat</div>
+                        <div>Total Loss: ~$142K USD</div>
+                        <div style="margin-top: 10px; color: #666;">Last active: 2024-02-03</div>
+                    `;
+                } else {
+                    resultDiv.style.borderColor = '#00ff00';
+                    resultDiv.innerHTML = `
+                        <div style="color: #00ff00; margin-bottom: 10px;">
+                            <i class="fa-solid fa-check-circle"></i> NOT IN DATABASE
+                        </div>
+                        <div>Wallet ini belum terdaftar di registry kami.</div>
+                        <div style="color: #666; margin-top: 10px; font-size: 0.8rem;">
+                            *Belum terdaftar ≠ Aman. Selalu lakukan riset tambahan.
+                        </div>
+                    `;
+                }
+            }, 1000);
+        }
+
+        // Handle Report Submit
+        function handleReport(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalHTML = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                alert('Laporan terkirim! Akan direview dalam 24-48 jam. Poin akan ditambahkan setelah verifikasi.');
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                e.target.reset();
+            }, 1500);
+        }
+
+        // Smooth scroll untuk anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

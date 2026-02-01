@@ -302,6 +302,47 @@
         body.light-mode .differentiation-title {
             color: #111111; /* Pitch Black for light mode */
         }
+
+        /* Light Mode Overrides for Input Fields & Form Boxes */
+        body.light-mode .form-control,
+        body.light-mode .formula-box {
+            background: #F3F4F6;
+            color: #1F2937;
+            border-color: #D1D5DB;
+        }
+
+        /* Light Mode Overrides for Cards */
+        body.light-mode .card {
+            background: #FFFFFF;
+            border-color: #E5E7EB;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Light Mode - Scammer Wallet Cards */
+        body.light-mode .scammer-wallet-card {
+            background: #F9FAFB;
+            border-color: #E5E7EB;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Light Mode - Card Text Colors */
+        body.light-mode .scammer-wallet-card .wallet-address,
+        body.light-mode .scammer-wallet-card .victims-amount,
+        body.light-mode .card p {
+            color: #374151;
+        }
+
+        /* Light Mode - Threat Feed Marquee/Ticker */
+        body.light-mode .threat-feed-marquee {
+            background: #374151; /* dark gray instead of black */
+            border-top-color: var(--hazard-orange);
+        }
+
+        /* Light Mode - Serial Number Box Text (Keep white on red background) */
+        body.light-mode .serial-number {
+            color: #ffffff;
+        }
+
         .hero-subtitle {
             font-size: 1.1rem; color: var(--text-muted); margin-bottom: 10px;
             font-family: var(--font-mono);

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#FF4500">
     <title>SUSPECTED — On-Chain Risk Registry</title>
-    <meta name="description" content="Registry eksperimental untuk tracking pola on-chain yang mencurigakan di jaringan Solana. Masih dalam tahap pengembangan aktif.">
+    <meta name="description" content="Experimental registry for tracking suspicious on-chain patterns on the Solana network. Currently under active development.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* --- CSS BASE DARI REFERENSI (Disesuaikan) --- */
@@ -243,7 +243,7 @@
                 transition: none; /* Hilangkan transisi */
             }
 
-            /* Hapus semua efek hover - state tetap sama */
+            /* Remove all hover effects - state remains the same */
             .nav-links .theme-toggle:hover,
             .nav-links .theme-toggle:active {
                 background: transparent;
@@ -991,11 +991,11 @@
                 </button>
                 
                 <div class="nav-links" id="navLinks">
-                    <a href="#about">Tentang</a>
+                    <a href="#about">About</a>
                     <a href="#point-system">Point System</a>
-                    <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;" aria-label="Submit a report">Laporkan</a>
+                    <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;" aria-label="Submit a report">Report</a>
                     
-                    <!-- Mobile: Theme Toggle di bawah Laporkan -->
+                    <!-- Mobile: Theme Toggle below Report -->
                     <button class="theme-toggle" id="themeToggleMobile" aria-label="Switch to light mode">
                         <i class="fa-solid fa-moon"></i>
                     </button>
@@ -1012,14 +1012,14 @@
             <h1 class="hero-title">On-Chain Risk Registry</h1>
             <p class="hero-subtitle" id="hero-subtitle-text"></p>
             <p class="hero-disclaimer">
-                *Platform masih dalam tahap pengembangan aktif. Data yang ditampilkan bersifat preliminary dan memerlukan verifikasi komunitas.
+                *Platform is still under active development. Displayed data is preliminary and requires community verification.
             </p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <a href="#check" class="btn btn-primary" id="check-wallet-btn" aria-label="Check wallet for risk">
-                    <i class="fa-solid fa-magnifying-glass"></i> Cek Wallet
+                    <i class="fa-solid fa-magnifying-glass"></i> Check Wallet
                 </a>
                 <a href="#about" class="btn btn-outline" aria-label="Learn more about the platform">
-                    <i class="fa-solid fa-circle-info"></i> Pelajari
+                    <i class="fa-solid fa-circle-info"></i> Learn More
                 </a>
             </div>
         </div>
@@ -1028,13 +1028,13 @@
     <!-- Main Content -->
     <main id="main-content">
     
-    <!-- About Section: Apa ini & Keunggulan -->
+    <!-- About Section: What is this & Advantages -->
     <section id="about" class="section-padding">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title" style="border: none; display: inline-block;">Apa Ini?</h2>
+                <h2 class="section-title" style="border: none; display: inline-block;">What Is This?</h2>
                 <p>
-                    SUSPECTED adalah registry eksperimental yang mencoba memetakan pola transaksi mencurigakan dan histori wallet developer di ekosistem Solana. Bukan alat investasi, melainkan infrastruktur transparansi.
+                    SUSPECTED is an experimental registry that attempts to map suspicious transaction patterns and developer wallet history in the Solana ecosystem. Not an investment tool, but rather a transparency infrastructure.
                 </p>
             </div>
 
@@ -1042,17 +1042,17 @@
                 <div class="card">
                     <div class="card-icon"><i class="fa-solid fa-database"></i></div>
                     <h3>On-Chain Native</h3>
-                    <p>Semua data bersumber dari blockchain Solana yang publik. Tidak ada data rahasia atau insider information.</p>
+                    <p>All data is sourced from the public Solana blockchain. No confidential data or insider information.</p>
                 </div>
                 <div class="card">
                     <div class="card-icon"><i class="fa-solid fa-users"></i></div>
                     <h3>Crowdsourced</h3>
-                    <p>Komunitas dapat mengajukan bukti transaksi (tx hash) yang kemudian diverifikasi bersama, bukan sentralisasi otoritas tunggal.</p>
+                    <p>The community can submit transaction evidence (tx hash) which is then verified collectively, not centralized single authority.</p>
                 </div>
                 <div class="card">
                     <div class="card-icon"><i class="fa-solid fa-code-branch"></i></div>
                     <h3>Open Structure</h3>
-                    <p>Struktur data dirancang agar bisa di-integrasikan wallet lain via API. Bukan walled garden.</p>
+                    <p>Data structure is designed to be integrated by other wallets via API. Not a walled garden.</p>
                 </div>
             </div>
 
@@ -1060,18 +1060,18 @@
             <div style="margin-top: 100px;">
                 <div class="feature-row">
                     <div class="feature-content">
-                        <!-- PERUBAHAN: Warna adaptif untuk Bedanya dengan Platform Lain -->
+                        <!-- CHANGE: Adaptive color for What's Different from Other Platforms -->
                         <h3 class="differentiation-title" style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px;">
-                            Bedanya dengan Platform Lain?
+                            What's Different from Other Platforms?
                         </h3>
                         <p style="color: #888; margin-bottom: 20px;">
-                            Banyak scanner yang fokus pada kontrak token (honeypot, mint authority). Kami fokus pada <strong>actorbehaviour</strong> — pola historis wallet developer yang sama terulang di berbagai project.
+                            Many scanners focus on token contracts (honeypot, mint authority). We focus on <strong>actor behavior</strong> — historical patterns of the same developer wallet recurring across different projects.
                         </p>
                         <ul class="feature-list">
-                            <li>Tracking cross-project (wallet yang sama di token berbeda)</li>
-                            <li>Fokus pada liquidity drain pattern, bukan sekadar code audit</li>
-                            <li>Sistem reputasi validator terbuka (siapapun bisa jadi verifier)</li>
-                            <li>Tidak ada "pay to remove" label — transparansi mutlak</li>
+                            <li>Cross-project tracking (same wallet across different tokens)</li>
+                            <li>Focus on liquidity drain patterns, not just code audits</li>
+                            <li>Open validator reputation system (anyone can be a verifier)</li>
+                            <li>No "pay to remove" labels — absolute transparency</li>
                         </ul>
                     </div>
                     <div class="feature-visual">
@@ -1088,7 +1088,7 @@
             <div class="section-header">
                 <h2 class="section-title">Latest Scammer Wallets</h2>
                 <p>
-                    Registry terbaru dari wallet yang teridentifikasi melakukan aktivitas mencurigakan atau terkonfirmasi sebagai scammer.
+                    Latest registry of wallets identified as performing suspicious activities or confirmed as scammers.
                 </p>
             </div>
 
@@ -1347,7 +1347,7 @@
             <div class="section-header">
                 <h2 class="section-title">Point & Incentive System</h2>
                 <p>
-                    Mekanisme awal untuk membangun database: Kontributor yang memberikan bukti valid akan mendapatkan poin yang nantinya menjadi parameter alokasi reward.
+                    Initial mechanism for building the database: Contributors who provide valid evidence will earn points that later become parameters for reward allocation.
                 </p>
             </div>
 
@@ -1356,50 +1356,50 @@
                 
                 <div class="point-step">
                     <div class="step-number">01</div>
-                    <h4>Submit Bukti</h4>
-                    <p>Laporkan wallet dev + tx hash rugpull</p>
+                    <h4>Submit Evidence</h4>
+                    <p>Report dev wallet + rugpull tx hash</p>
                 </div>
                 
                 <div class="point-step">
                     <div class="step-number">02</div>
-                    <h4>Verifikasi</h4>
-                    <p>Validator komunitas cek validitas on-chain</p>
+                    <h4>Verification</h4>
+                    <p>Community validators check on-chain validity</p>
                 </div>
                 
                 <div class="point-step">
                     <div class="step-number">03</div>
-                    <h4>Dapat Poin</h4>
-                    <p>Point masuk ke akun contributor</p>
+                    <h4>Earn Points</h4>
+                    <p>Points are added to contributor account</p>
                 </div>
                 
                 <div class="point-step">
                     <div class="step-number">04</div>
                     <h4>Airdrop Allocation</h4>
-                    <p>Poin + Token Hold = Alokasi</p>
+                    <p>Points + Token Hold = Allocation</p>
                 </div>
             </div>
 
             <div class="formula-box">
-                <div style="margin-bottom: 20px; color: #666; font-size: 0.8rem;">FORMULA ALLOCATION (KONSEP AWAL)</div>
+                <div style="margin-bottom: 20px; color: #666; font-size: 0.8rem;">ALLOCATION FORMULA (INITIAL CONCEPT)</div>
                 <div class="formula">
-                    (Total Poin Kontribusi × Weight) + (Avg Token Hold × Duration) = Allocation Score
+                    (Total Contribution Points × Weight) + (Avg Token Hold × Duration) = Allocation Score
                 </div>
                 <p style="color: #444; font-size: 0.8rem; margin-top: 10px;">
-                    *Detail matematis dan smart contract distribution masih dalam pengembangan. Tidak menjanjikan nilai moneter spesifik.
+                    *Mathematical details and smart contract distribution are still under development. No specific monetary value promised.
                 </p>
             </div>
 
             <div class="grid-2" style="margin-top: 50px;">
                 <div class="card">
                     <h3 style="color: var(--hazard-orange); margin-bottom: 15px;">
-                        <i class="fa-solid fa-upload"></i> Cara Submit
+                        <i class="fa-solid fa-upload"></i> How to Submit
                     </h3>
                     <p style="font-size: 0.85rem; line-height: 1.8; color: #aaa;">
-                        1. Temukan tx hash penarikan likuiditas (liquidity removal)<br>
-                        2. Copy wallet address developer<br>
-                        3. Isi form dengan evidence link (Solscan)<br>
-                        4. Tunggu verifikasi 24-48 jam<br>
-                        5. Poin masuk otomatis setelah approved
+                        1. Find liquidity withdrawal tx hash (liquidity removal)<br>
+                        2. Copy developer wallet address<br>
+                        3. Fill out form with evidence link (Solscan)<br>
+                        4. Wait for verification 24-48 hours<br>
+                        5. Points automatically added after approval
                     </p>
                 </div>
                 <div class="card">
@@ -1407,10 +1407,10 @@
                         <i class="fa-solid fa-shield-halved"></i> Anti-Gaming
                     </h3>
                     <p style="font-size: 0.85rem; line-height: 1.8; color: #aaa;">
-                        - Minimal holding token 7 hari untuk eligible airdrop<br>
+                        - Minimum 7-day token holding for airdrop eligibility<br>
                         - Sybil resistance via on-chain activity check<br>
-                        - False report akan mengurangi reputasi (bukan poin)<br>
-                        - Multi-wallet detection otomatis
+                        - False reports will reduce reputation (not points)<br>
+                        - Automatic multi-wallet detection
                     </p>
                 </div>
             </div>
@@ -1421,20 +1421,20 @@
     <section id="check" class="section-padding" style="background: var(--bg-secondary);">
         <div class="container" style="max-width: 600px;">
             <div class="section-header">
-                <h2 class="section-title" style="border: none; display: inline-block;">Cek Wallet</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Database masih terbatas (alpha)</p>
+                <h2 class="section-title" style="border: none; display: inline-block;">Check Wallet</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Database still limited (alpha)</p>
             </div>
             
             <div class="form-box">
                 <div class="form-group">
                     <label for="walletInput" class="form-label">Solana Wallet Address</label>
-                    <input type="text" class="form-control" placeholder="7xkx... atau 44 karakter full address" id="walletInput" aria-describedby="walletInputHelp">
+                    <input type="text" class="form-control" placeholder="7xkx... or 44-character full address" id="walletInput" aria-describedby="walletInputHelp">
                 </div>
                 <button onclick="debouncedCheckWallet()" class="btn btn-primary" style="width: 100%; justify-content: center;" aria-label="Scan database for wallet risk">
                     <i class="fa-solid fa-search"></i> Scan Database
                 </button>
                 <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid #333; display: none; font-family: var(--font-mono); font-size: 0.85rem;">
-                    <!-- Result akan muncul di sini -->
+                    <!-- Result will appear here -->
                 </div>
             </div>
         </div>
@@ -1445,14 +1445,14 @@
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Submit Evidence</h2>
-                <p>Laporkan bukti rugpull untuk mendapatkan poin kontribusi</p>
+                <p>Report rugpull evidence to earn contribution points</p>
             </div>
             
             <div class="form-box">
                 <form id="reportForm" onsubmit="handleReport(event)">
                     <div class="form-group">
                         <label for="walletAddress" class="form-label">Developer Wallet Address</label>
-                        <input type="text" id="walletAddress" class="form-control" required placeholder="Alamat wallet yang dicurigai" aria-required="true" aria-describedby="walletError">
+                        <input type="text" id="walletAddress" class="form-control" required placeholder="Suspected wallet address" aria-required="true" aria-describedby="walletError">
                         <div class="error-message" id="walletError">
                             <i class="fa-solid fa-exclamation-circle"></i>
                             <span>Invalid Solana wallet address (32-44 base58 characters)</span>
@@ -1460,9 +1460,9 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="txHash" class="form-label">Transaction Hash (Bukti)</label>
-                        <input type="text" id="txHash" class="form-control" required placeholder="Contoh: 5xkt... (Solscan link)" aria-required="true" aria-describedby="txHashHelp txHashError">
-                        <small id="txHashHelp" style="color: #444; font-size: 0.75rem;">Paste link Solscan atau tx hash lengkap</small>
+                        <label for="txHash" class="form-label">Transaction Hash (Evidence)</label>
+                        <input type="text" id="txHash" class="form-control" required placeholder="Example: 5xkt... (Solscan link)" aria-required="true" aria-describedby="txHashHelp txHashError">
+                        <small id="txHashHelp" style="color: #444; font-size: 0.75rem;">Paste Solscan link or full tx hash</small>
                         <div class="error-message" id="txHashError">
                             <i class="fa-solid fa-exclamation-circle"></i>
                             <span>Must be a valid URL or base58 signature (64-88 chars)</span>
@@ -1470,18 +1470,18 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="projectToken" class="form-label">Project Token (Opsional)</label>
+                        <label for="projectToken" class="form-label">Project Token (Optional)</label>
                         <input type="text" id="projectToken" class="form-control" placeholder="$TOKEN / Contract Address">
                     </div>
 
                     <div class="form-group">
-                        <label for="description" class="form-label">Keterangan Singkat</label>
-                        <textarea id="description" class="form-control" rows="3" placeholder="Jelaskan pola yang ditemukan..." maxlength="500" aria-describedby="charCounter"></textarea>
+                        <label for="description" class="form-label">Brief Description</label>
+                        <textarea id="description" class="form-control" rows="3" placeholder="Explain the pattern found..." maxlength="500" aria-describedby="charCounter"></textarea>
                         <div class="char-counter" id="charCounter">0 / 500</div>
                     </div>
 
                     <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; justify-content: center;" disabled aria-label="Submit report for review">
-                        <i class="fa-solid fa-paper-plane"></i> Submit untuk Review
+                        <i class="fa-solid fa-paper-plane"></i> Submit for Review
                     </button>
                 </form>
             </div>
@@ -1503,12 +1503,12 @@
             </div>
             <div class="disclaimer">
                 <p>
-                    SUSPECTED adalah proyek eksperimental. Data disediakan "sebagaimana adanya" tanpa jaminan akurasi 100%. 
-                    Platform ini bukan nasihat investasi dan tidak bertanggung jawab atas keputusan finansial pengguna. 
+                    SUSPECTED is an experimental project. Data is provided "as is" without 100% accuracy guarantee. 
+                    This platform is not financial advice and is not responsible for users' financial decisions. 
                     Always DYOR (Do Your Own Research).
                 </p>
                 <p style="margin-top: 10px;">
-                    © 2025 Suspected Labs. Open Source di bawah MIT License.
+                    © 2025 Suspected Labs. Open Source under MIT License.
                 </p>
             </div>
         </div>
@@ -1824,7 +1824,7 @@
             const resultDiv = document.getElementById('checkResult');
             
             if (input.length < 10) {
-                showNotification('Masukkan address yang valid', 'error');
+                showNotification('Enter a valid address', 'error');
                 return;
             }
 
@@ -2034,12 +2034,12 @@
 
                 await response.json();
                 
-                showNotification('Laporan terkirim! Akan direview dalam 24-48 jam. Poin akan ditambahkan setelah verifikasi.', 'success');
+                showNotification('Report sent! Will be reviewed within 24-48 hours. Points will be added after verification.', 'success');
                 form.reset();
                 
             } catch (error) {
                 console.error('Error submitting report:', error);
-                showNotification('Gagal mengirim laporan: ' + error.message + '. Silakan coba lagi nanti.', 'error');
+                showNotification('Failed to send report: ' + error.message + '. Please try again later.', 'error');
             } finally {
                 btn.innerHTML = originalHTML;
                 btn.disabled = false;

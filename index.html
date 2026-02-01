@@ -23,15 +23,17 @@
             --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
             --font-mono: 'Courier New', 'Consolas', monospace;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --scanline-opacity: 0.3;
         }
 
-        /* Light mode theme */
+        /* Light mode theme - High-Tech Industrial / Mirror's Edge Aesthetic */
         body.light-mode {
-            --bg-color: #f5f5f5;
-            --bg-secondary: #ffffff;
-            --text-main: #1a1a1a;
-            --text-muted: #666666;
-            --border-color: #ddd;
+            --bg-color: #EBEBEB; /* Light Concrete Grey */
+            --bg-secondary: #FFFFFF; /* Pure white for cards/surfaces */
+            --text-main: #111111; /* Pitch Black for maximum contrast */
+            --text-muted: #555555; /* Darker muted text */
+            --border-color: #CCCCCC; /* Light grey borders */
+            --scanline-opacity: 0.08; /* Low opacity for textured digital screen effect */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -82,7 +84,9 @@
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
-            background-size: 100% 4px; pointer-events: none; z-index: 9998; opacity: 0.3;
+            background-size: 100% 4px; pointer-events: none; z-index: 9998; 
+            opacity: var(--scanline-opacity);
+            mix-blend-mode: multiply;
         }
 
         .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
@@ -103,7 +107,7 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         body.light-mode header {
-            background: rgba(245, 245, 245, 0.95);
+            background: rgba(235, 235, 235, 0.95);
         }
         nav { display: flex; justify-content: space-between; align-items: center; height: 70px; gap: 20px; position: relative; }
         .logo { 
@@ -206,7 +210,7 @@
             }
             
             body.light-mode .nav-links {
-                background: rgba(245, 245, 245, 0.98);
+                background: rgba(235, 235, 235, 0.98);
             }
             
             .nav-links.active {
@@ -287,8 +291,8 @@
         }
         /* Dark color for light mode */
         body.light-mode .hero-title {
-            color: #000000; /* Warna hitam untuk light mode */
-            -webkit-text-fill-color: #000000;
+            color: #111111; /* Pitch Black for light mode */
+            -webkit-text-fill-color: #111111;
         }
         /* PERUBAHAN: Warna adaptif untuk Bedanya dengan Platform Lain */
         .differentiation-title {
@@ -296,7 +300,7 @@
         }
         /* Dark color for light mode */
         body.light-mode .differentiation-title {
-            color: #000000; /* Warna hitam untuk light mode */
+            color: #111111; /* Pitch Black for light mode */
         }
         .hero-subtitle {
             font-size: 1.1rem; color: var(--text-muted); margin-bottom: 10px;

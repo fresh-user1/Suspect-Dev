@@ -327,7 +327,6 @@
 
         /* Light Mode - Card Text Colors */
         body.light-mode .scammer-wallet-card .wallet-address,
-        body.light-mode .scammer-wallet-card .victims-amount,
         body.light-mode .card p {
             color: #374151;
         }
@@ -346,6 +345,36 @@
         /* Light Mode - Circular Gauge Background (Soft Gray instead of Black) */
         body.light-mode .circular-gauge-ring::before {
             background: #E5E7EB; /* Soft Gray (Tailwind Gray-200) */
+        }
+
+        /* --- LIGHT MODE SPECIFIC OVERRIDES --- */
+
+        /* 1. Status Badges: Gray BG, Vibrant Text */
+        body.light-mode .status-confirmed {
+            background: #F3F4F6 !important;
+            border-color: #E5E7EB !important;
+            color: #DC2626 !important; /* Keep it Red */
+        }
+
+        body.light-mode .status-suspicious {
+            background: #F3F4F6 !important;
+            border-color: #E5E7EB !important;
+            color: #D97706 !important; /* Keep it Orange */
+        }
+
+        /* 2. Circular Gauge: Gray Track, Black Text */
+        body.light-mode .circular-gauge-score {
+            color: #111111 !important; /* Black text for visibility */
+        }
+
+        body.light-mode .circular-gauge-max {
+            color: #6B7280 !important;
+        }
+
+        /* 3. Victims Amount Visibility */
+        body.light-mode .victims-amount {
+            color: #111111 !important;
+            font-weight: 700;
         }
 
         .hero-subtitle {

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FF4500">
     <title>SUSPECTED — On-Chain Risk Registry</title>
     <meta name="description" content="Registry eksperimental untuk tracking pola on-chain yang mencurigakan di jaringan Solana. Masih dalam tahap pengembangan aktif.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,7 +13,7 @@
             --bg-color: #0a0a0a;
             --bg-secondary: #111111;
             --text-main: #e0e0e0;
-            --text-muted: #888888;
+            --text-muted: #aaaaaa;
             --hazard-orange: #FF4500; /* Warna utama request */
             --hazard-dim: #cc3700;
             --cctv-green: #00ff00;
@@ -35,6 +36,32 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
+        
+        /* Skip to content link for accessibility */
+        .skip-to-content {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--hazard-orange);
+            color: #fff;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10001;
+            font-weight: 600;
+            border-radius: 0 0 4px 0;
+        }
+        .skip-to-content:focus {
+            top: 0;
+            outline: 2px solid var(--hazard-orange);
+            box-shadow: 0 0 0 4px rgba(255, 69, 0, 0.3);
+        }
+
+        /* Focus indicator styling */
+        a:focus, button:focus, input:focus, textarea:focus, select:focus {
+            outline: 2px solid var(--hazard-orange);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(255, 69, 0, 0.2);
+        }
         
         body {
             font-family: var(--font-main);
@@ -151,7 +178,7 @@
         .hero-title {
             font-size: 3.5rem; font-weight: 900; text-transform: uppercase; 
             letter-spacing: 3px; margin-bottom: 20px; line-height: 1.1;
-            background: linear-gradient(to bottom, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background: linear-gradient(to bottom, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .hero-subtitle {
             font-size: 1.1rem; color: var(--text-muted); margin-bottom: 10px;
@@ -306,51 +333,6 @@
             letter-spacing: 2px;
         }
 
-        /* Roadmap Section */
-        .roadmap-container {
-            position: relative; max-width: 800px; margin: 0 auto;
-        }
-        .roadmap-line {
-            position: absolute; left: 20px; top: 0; bottom: 0; width: 2px;
-            background: linear-gradient(to bottom, var(--hazard-orange), transparent);
-        }
-        .roadmap-item {
-            position: relative; padding-left: 60px; margin-bottom: 50px;
-            opacity: 0.6; transition: var(--transition);
-        }
-        .roadmap-item:hover { opacity: 1; }
-        .roadmap-item.active { opacity: 1; }
-        .roadmap-item.active .roadmap-dot { background: var(--hazard-orange); box-shadow: 0 0 10px var(--hazard-orange); }
-        .roadmap-dot {
-            position: absolute; left: 11px; top: 5px; width: 20px; height: 20px;
-            border: 2px solid var(--hazard-orange); border-radius: 50%;
-            background: var(--bg-color);
-        }
-        .roadmap-phase {
-            font-family: var(--font-mono); font-size: 0.8rem; color: var(--hazard-orange);
-            margin-bottom: 5px; text-transform: uppercase;
-        }
-        .roadmap-title {
-            font-size: 1.2rem; text-transform: uppercase; margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        .roadmap-desc {
-            color: #666; font-size: 0.9rem; line-height: 1.6;
-        }
-        .roadmap-list {
-            margin-top: 10px; padding-left: 20px; color: #888; font-size: 0.85rem;
-        }
-        .roadmap-list li { margin-bottom: 5px; }
-
-        /* Status Badge */
-        .status-badge {
-            display: inline-block; padding: 2px 8px; font-size: 0.7rem;
-            border: 1px solid; margin-left: 10px; vertical-align: middle;
-        }
-        .status-wip { border-color: var(--hazard-orange); color: var(--hazard-orange); }
-        .status-plan { border-color: #444; color: #666; }
-        .status-done { border-color: var(--cctv-green); color: var(--cctv-green); }
-
         /* Report Form */
         .form-box {
             max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.02);
@@ -421,22 +403,11 @@
             .point-flow { flex-direction: column; gap: 30px; }
             .connector { display: none; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
-            .roadmap-container { padding-left: 10px; }
-            .roadmap-line { left: 10px; }
-            .roadmap-item { padding-left: 45px; }
-            .roadmap-dot { left: 1px; }
         }
 
         @media (max-width: 480px) {
             .hero-title { font-size: 2rem; }
             .grid-3 .card { margin: 0 10px; }
-            .roadmap-container { padding-left: 5px; }
-            .roadmap-line { left: 5px; }
-            .roadmap-item { padding-left: 35px; }
-            .roadmap-dot { left: -4px; }
-            .roadmap-title { font-size: 1rem; word-wrap: break-word; }
-            .roadmap-desc { font-size: 0.85rem; word-wrap: break-word; }
-            .roadmap-list { font-size: 0.8rem; }
             
             /* Point flow vertical with down arrows */
             .point-flow { flex-direction: column; gap: 20px; }
@@ -672,6 +643,9 @@
     </style>
 </head>
 <body>
+    <!-- Skip to content link for keyboard navigation -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+    
     <div class="noise-overlay"></div>
     <div class="scanlines"></div>
 
@@ -679,18 +653,17 @@
     <header>
         <div class="container">
             <nav>
-                <a href="#" class="logo">
+                <a href="#" class="logo" aria-label="SUSPECTED Home">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     SUSPECTED
                 </a>
-                <div class="menu-toggle" onclick="toggleMenu()">
+                <div class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
                     <i class="fa-solid fa-bars"></i>
                 </div>
                 <div class="nav-links" id="navLinks">
                     <a href="#about">Tentang</a>
                     <a href="#point-system">Point System</a>
-                    <a href="#roadmap">Roadmap</a>
-                    <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;">Laporkan</a>
+                    <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;" aria-label="Submit a report">Laporkan</a>
                 </div>
                 <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
                     <i class="fa-solid fa-moon"></i>
@@ -701,7 +674,7 @@
 
     <!-- Hero Section -->
     <section id="hero">
-        <canvas id="hero-canvas"></canvas>
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
         <div class="hero-content fade-in">
             <div class="badge-beta">Experimental Build v0.1</div>
             <h1 class="hero-title">On-Chain Risk Registry</h1>
@@ -710,16 +683,19 @@
                 *Platform masih dalam tahap pengembangan aktif. Data yang ditampilkan bersifat preliminary dan memerlukan verifikasi komunitas.
             </p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="#check" class="btn btn-primary" id="check-wallet-btn">
+                <a href="#check" class="btn btn-primary" id="check-wallet-btn" aria-label="Check wallet for risk">
                     <i class="fa-solid fa-magnifying-glass"></i> Cek Wallet
                 </a>
-                <a href="#about" class="btn btn-outline">
+                <a href="#about" class="btn btn-outline" aria-label="Learn more about the platform">
                     <i class="fa-solid fa-circle-info"></i> Pelajari
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- Main Content -->
+    <main id="main-content">
+    
     <!-- About Section: Apa ini & Keunggulan -->
     <section id="about" class="section-padding">
         <div class="container">
@@ -1088,125 +1064,20 @@
         </div>
     </section>
 
-    <!-- Roadmap Section (Multi-Fase) -->
-    <section id="roadmap" class="section-padding">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Development Roadmap</h2>
-                <p>
-                    Proyek ini kompleks dan memerlukan fase pengembangan panjang. Tidak ada janji "moon" dalam 3 bulan.
-                </p>
-            </div>
-
-            <div class="roadmap-container">
-                <div class="roadmap-line"></div>
-
-                <!-- Fase 1 -->
-                <div class="roadmap-item active">
-                    <div class="roadmap-dot"></div>
-                    <div class="roadmap-phase">Fase 01 — Q1 2025</div>
-                    <div class="roadmap-title">
-                        MVP & Data Seeding
-                        <span class="status-badge status-wip">In Progress</span>
-                    </div>
-                    <div class="roadmap-desc">
-                        Landing page statis, form submission manual, kurasi data 50-100 kasus historis secara manual oleh tim inti.
-                    </div>
-                    <ul class="roadmap-list">
-                        <li>Frontend HTML/CSS/JS (current)</li>
-                        <li>Database MongoDB setup</li>
-                        <li>Manual verification system</li>
-                        <li>Community onboarding (Twitter/X)</li>
-                    </ul>
-                </div>
-
-                <!-- Fase 2 -->
-                <div class="roadmap-item">
-                    <div class="roadmap-dot"></div>
-                    <div class="roadmap-phase">Fase 02 — Q2 2025</div>
-                    <div class="roadmap-title">
-                        Blockchair Integration
-                        <span class="status-badge status-plan">Planned</span>
-                    </div>
-                    <div class="roadmap-desc">
-                        Integrasi API Blockchair untuk otomatisasi tracing wallet dan deteksi pattern LP removal secara algoritmik.
-                    </div>
-                    <ul class="roadmap-list">
-                        <li>Automated wallet clustering</li>
-                        <li>Risk scoring algorithm v1</li>
-                        <li>Browser extension beta (Phantom)</li>
-                        <li>Point system smart contract (Solana)</li>
-                    </ul>
-                </div>
-
-                <!-- Fase 3 -->
-                <div class="roadmap-item">
-                    <div class="roadmap-dot"></div>
-                    <div class="roadmap-phase">Fase 03 — Q3 2025</div>
-                    <div class="roadmap-title">
-                        Decentralized Verification
-                        <span class="status-badge status-plan">Planned</span>
-                    </div>
-                    <div class="roadmap-desc">
-                        Sistem staking token untuk menjadi validator. Mekanisme voting on-chain untuk status "Confirmed" vs "Disputed".
-                    </div>
-                    <ul class="roadmap-list">
-                        <li>Validator staking mechanism</li>
-                        <li>Dispute resolution court</li>
-                        <li>Governance token launch (jika diperlukan)</li>
-                        <li>API public untuk integrasi wallet</li>
-                    </ul>
-                </div>
-
-                <!-- Fase 4 -->
-                <div class="roadmap-item">
-                    <div class="roadmap-dot"></div>
-                    <div class="roadmap-phase">Fase 04 — Q4 2025</div>
-                    <div class="roadmap-title">
-                        Cross-Chain & AI Analysis
-                        <span class="status-badge status-plan">Research</span>
-                    </div>
-                    <div class="roadmap-desc">
-                        Ekspansi ke jaringan EVM (Base, ETH) dan implementasi machine learning untuk deteksi pattern anomali otomatis.
-                    </div>
-                    <ul class="roadmap-list">
-                        <li>Multi-chain support (Base, ETH)</li>
-                        <li>ML-based anomaly detection</li>
-                        <li>Mobile app (React Native)</li>
-                        <li>Partnership dengan wallet besar</li>
-                    </ul>
-                </div>
-
-                <!-- Fase 5 -->
-                <div class="roadmap-item">
-                    <div class="roadmap-dot"></div>
-                    <div class="roadmap-phase">Fase 05 — 2026+</div>
-                    <div class="roadmap-title">
-                        Autonomous Registry
-                        <span class="status-badge status-plan">Vision</span>
-                    </div>
-                    <div class="roadmap-desc">
-                        DAO sepenuhnya yang mengelola registry tanpa tim inti. Incentivized data correction dan self-sustaining economic model.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Simple Check Wallet Section -->
     <section id="check" class="section-padding" style="background: var(--bg-secondary);">
         <div class="container" style="max-width: 600px;">
-            <div class="text-center" style="margin-bottom: 40px;">
+            <div class="section-header">
                 <h2 class="section-title" style="border: none; display: inline-block;">Cek Wallet</h2>
-                <p style="color: #666; font-size: 0.9rem;">Database masih terbatas (alpha)</p>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Database masih terbatas (alpha)</p>
             </div>
             
             <div class="form-box">
                 <div class="form-group">
-                    <label class="form-label">Solana Wallet Address</label>
-                    <input type="text" class="form-control" placeholder="7xkx... atau 44 karakter full address" id="walletInput">
+                    <label for="walletInput" class="form-label">Solana Wallet Address</label>
+                    <input type="text" class="form-control" placeholder="7xkx... atau 44 karakter full address" id="walletInput" aria-describedby="walletInputHelp">
                 </div>
-                <button onclick="checkWallet()" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                <button onclick="debouncedCheckWallet()" class="btn btn-primary" style="width: 100%; justify-content: center;" aria-label="Scan database for wallet risk">
                     <i class="fa-solid fa-search"></i> Scan Database
                 </button>
                 <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid #333; display: none; font-family: var(--font-mono); font-size: 0.85rem;">
@@ -1227,8 +1098,8 @@
             <div class="form-box">
                 <form id="reportForm" onsubmit="handleReport(event)">
                     <div class="form-group">
-                        <label class="form-label">Developer Wallet Address</label>
-                        <input type="text" id="walletAddress" class="form-control" required placeholder="Alamat wallet yang dicurigai">
+                        <label for="walletAddress" class="form-label">Developer Wallet Address</label>
+                        <input type="text" id="walletAddress" class="form-control" required placeholder="Alamat wallet yang dicurigai" aria-required="true" aria-describedby="walletError">
                         <div class="error-message" id="walletError">
                             <i class="fa-solid fa-exclamation-circle"></i>
                             <span>Invalid Solana wallet address (32-44 base58 characters)</span>
@@ -1236,9 +1107,9 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Transaction Hash (Bukti)</label>
-                        <input type="text" id="txHash" class="form-control" required placeholder="Contoh: 5xkt... (Solscan link)">
-                        <small style="color: #444; font-size: 0.75rem;">Paste link Solscan atau tx hash lengkap</small>
+                        <label for="txHash" class="form-label">Transaction Hash (Bukti)</label>
+                        <input type="text" id="txHash" class="form-control" required placeholder="Contoh: 5xkt... (Solscan link)" aria-required="true" aria-describedby="txHashHelp txHashError">
+                        <small id="txHashHelp" style="color: #444; font-size: 0.75rem;">Paste link Solscan atau tx hash lengkap</small>
                         <div class="error-message" id="txHashError">
                             <i class="fa-solid fa-exclamation-circle"></i>
                             <span>Must be a valid URL or base58 signature (64-88 chars)</span>
@@ -1246,23 +1117,25 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Project Token (Opsional)</label>
+                        <label for="projectToken" class="form-label">Project Token (Opsional)</label>
                         <input type="text" id="projectToken" class="form-control" placeholder="$TOKEN / Contract Address">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Keterangan Singkat</label>
-                        <textarea id="description" class="form-control" rows="3" placeholder="Jelaskan pola yang ditemukan..." maxlength="500"></textarea>
+                        <label for="description" class="form-label">Keterangan Singkat</label>
+                        <textarea id="description" class="form-control" rows="3" placeholder="Jelaskan pola yang ditemukan..." maxlength="500" aria-describedby="charCounter"></textarea>
                         <div class="char-counter" id="charCounter">0 / 500</div>
                     </div>
 
-                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; justify-content: center;" disabled>
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; justify-content: center;" disabled aria-label="Submit report for review">
                         <i class="fa-solid fa-paper-plane"></i> Submit untuk Review
                     </button>
                 </form>
             </div>
         </div>
     </section>
+    
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -1271,9 +1144,9 @@
                 SUSPECTED<span>.LABELS</span>
             </div>
             <div class="footer-links">
-                <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                <a href="#"><i class="fa-brands fa-github"></i></a>
-                <a href="#"><i class="fa-solid fa-envelope"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="#" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
             </div>
             <div class="disclaimer">
                 <p>
@@ -1289,6 +1162,71 @@
     </footer>
 
     <script>
+        // ===== Utility Functions =====
+        
+        // Debounce function for performance optimization
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // ===== Lazy Loading with Intersection Observer =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lazy load sections below the fold
+            const lazyLoadSections = document.querySelectorAll('section:not(#hero)');
+            
+            const sectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('lazy-loaded');
+                        // Optional: Stop observing once loaded
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '50px', // Start loading slightly before entering viewport
+                threshold: 0.1
+            });
+            
+            lazyLoadSections.forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                sectionObserver.observe(section);
+            });
+            
+            // Add CSS for lazy-loaded state
+            const style = document.createElement('style');
+            style.textContent = `
+                .lazy-loaded {
+                    opacity: 1 !important;
+                    transform: translateY(0) !important;
+                }
+                img[loading="lazy"] {
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                }
+                img[loading="lazy"].loaded {
+                    opacity: 1;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Setup for future images with loading="lazy"
+            document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+                img.addEventListener('load', function() {
+                    this.classList.add('loaded');
+                });
+            });
+        });
+        
         // ===== Hero Section Effects =====
         
         // 1. Particle Effect on Canvas
@@ -1639,6 +1577,9 @@
                 showNotification('Error: ' + error.message, 'error');
             }
         }
+
+        // Create debounced version of checkWallet (500ms delay)
+        const debouncedCheckWallet = debounce(checkWallet, 500);
 
         // Form Validation Functions
         function validateSolanaAddress(address) {

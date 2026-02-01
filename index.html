@@ -17,6 +17,7 @@
             --hazard-dim: #cc3700;
             --cctv-green: #00ff00;
             --alert-red: #ff3333;
+            --warning-orange: #ff8800;
             --border-color: #2a2a2a;
             --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
             --font-mono: 'Courier New', 'Consolas', monospace;
@@ -391,7 +392,7 @@
             color: var(--text-muted);
         }
         .char-counter.warning {
-            color: #ff8800;
+            color: var(--warning-orange);
         }
 
         /* Footer */
@@ -1525,7 +1526,13 @@
         function validateTxHash(hash) {
             // Check if it's a URL starting with http
             if (hash.startsWith('http')) {
-                return true;
+                try {
+                    // Validate URL structure
+                    new URL(hash);
+                    return true;
+                } catch {
+                    return false;
+                }
             }
             // Otherwise check if it's a base58 signature (64-88 characters)
             const base58Regex = /^[1-9A-HJ-NP-Za-km-z]{64,88}$/;
@@ -1537,17 +1544,16 @@
             const txHash = document.getElementById('txHash');
             const submitBtn = document.getElementById('submitBtn');
             
-            const isWalletValid = validateSolanaAddress(walletAddress.value.trim());
-            const isTxHashValid = validateTxHash(txHash.value.trim());
+            const walletValue = walletAddress.value.trim();
+            const txHashValue = txHash.value.trim();
+            
+            // Both fields must be non-empty and valid
+            const isWalletValid = walletValue !== '' && validateSolanaAddress(walletValue);
+            const isTxHashValid = txHashValue !== '' && validateTxHash(txHashValue);
             
             // Enable/disable submit button
-            if (isWalletValid && isTxHashValid) {
-                submitBtn.disabled = false;
-                return true;
-            } else {
-                submitBtn.disabled = true;
-                return false;
-            }
+            submitBtn.disabled = !(isWalletValid && isTxHashValid);
+            return isWalletValid && isTxHashValid;
         }
 
         // Real-time validation setup
@@ -1561,16 +1567,20 @@
 
             if (walletAddress) {
                 walletAddress.addEventListener('input', function() {
-                    const isValid = validateSolanaAddress(this.value.trim());
-                    if (this.value.trim() === '') {
+                    const value = this.value.trim();
+                    if (value === '') {
+                        // Empty field - remove error styling but don't validate
                         walletAddress.classList.remove('error');
                         walletError.classList.remove('show');
-                    } else if (!isValid) {
-                        walletAddress.classList.add('error');
-                        walletError.classList.add('show');
                     } else {
-                        walletAddress.classList.remove('error');
-                        walletError.classList.remove('show');
+                        const isValid = validateSolanaAddress(value);
+                        if (!isValid) {
+                            walletAddress.classList.add('error');
+                            walletError.classList.add('show');
+                        } else {
+                            walletAddress.classList.remove('error');
+                            walletError.classList.remove('show');
+                        }
                     }
                     validateForm();
                 });
@@ -1578,16 +1588,20 @@
 
             if (txHash) {
                 txHash.addEventListener('input', function() {
-                    const isValid = validateTxHash(this.value.trim());
-                    if (this.value.trim() === '') {
+                    const value = this.value.trim();
+                    if (value === '') {
+                        // Empty field - remove error styling but don't validate
                         txHash.classList.remove('error');
                         txHashError.classList.remove('show');
-                    } else if (!isValid) {
-                        txHash.classList.add('error');
-                        txHashError.classList.add('show');
                     } else {
-                        txHash.classList.remove('error');
-                        txHashError.classList.remove('show');
+                        const isValid = validateTxHash(value);
+                        if (!isValid) {
+                            txHash.classList.add('error');
+                            txHashError.classList.add('show');
+                        } else {
+                            txHash.classList.remove('error');
+                            txHashError.classList.remove('show');
+                        }
                     }
                     validateForm();
                 });

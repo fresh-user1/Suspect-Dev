@@ -111,7 +111,26 @@
             color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px;
         }
         .logo span { color: var(--hazard-orange); }
-        .nav-links { display: flex; gap: 30px; align-items: center; margin-left: auto; }
+        .nav-links { display: flex; gap: 30px; align-items: center; margin-left: auto; flex-wrap: wrap; position: relative; }
+        
+        /* Nav Right Section - contains menu toggle and theme toggle */
+        .nav-right-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Hide mobile theme toggle by default, show desktop */
+        .theme-toggle-mobile {
+            display: none;
+        }
+        .theme-toggle-desktop {
+            display: flex;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+        }
         .nav-links a {
             color: var(--text-main); text-decoration: none; font-size: 0.85rem;
             font-weight: 600; text-transform: uppercase; transition: var(--transition);
@@ -397,7 +416,23 @@
             .hero-title { font-size: 2.5rem; }
             .nav-links { display: none; }
             .menu-toggle { display: block; }
-            .theme-toggle { margin-left: auto; }
+            
+            /* Hide desktop theme toggle, show mobile */
+            .theme-toggle-desktop {
+                display: none !important;
+            }
+            .theme-toggle-mobile {
+                display: flex;
+            }
+            
+            /* Position nav-right-section to the right and stack items vertically */
+            .nav-right-section {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 5px;
+                margin-left: auto;
+            }
+            
             .feature-row, .feature-row:nth-child(even) { flex-direction: column; gap: 30px; }
             .feature-visual { flex: 0 0 auto; width: 100%; }
             .point-flow { flex-direction: column; gap: 30px; }
@@ -657,17 +692,22 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     SUSPECTED
                 </a>
-                <div class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
-                    <i class="fa-solid fa-bars"></i>
-                </div>
                 <div class="nav-links" id="navLinks">
                     <a href="#about">Tentang</a>
                     <a href="#point-system">Point System</a>
                     <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;" aria-label="Submit a report">Laporkan</a>
+                    <button class="theme-toggle theme-toggle-desktop" id="themeToggleDesktop" aria-label="Switch to light mode">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
                 </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
+                <div class="nav-right-section">
+                    <div class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                    <button class="theme-toggle theme-toggle-mobile" id="themeToggle" aria-label="Switch to light mode">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
             </nav>
         </div>
     </header>
@@ -1383,50 +1423,53 @@
 
         // Theme Toggle Functionality
         const themeToggle = document.getElementById('themeToggle');
+        const themeToggleDesktop = document.getElementById('themeToggleDesktop');
         
-        if (themeToggle) {
-            const themeIcon = themeToggle.querySelector('i');
+        // Function to toggle theme
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
             
-            if (!themeIcon) {
-                console.error('Theme toggle icon not found');
-            } else {
-                // Check for saved theme preference or default to dark mode
-                const currentTheme = localStorage.getItem('theme') || 'dark';
-                
-                // Function to update aria-label based on current theme
-                function updateAriaLabel(isLightMode) {
-                    themeToggle.setAttribute('aria-label', isLightMode ? 'Switch to dark mode' : 'Switch to light mode');
-                }
-                
-                // Apply saved theme on page load
-                if (currentTheme === 'light') {
-                    document.body.classList.add('light-mode');
-                    themeIcon.classList.remove('fa-moon');
-                    themeIcon.classList.add('fa-sun');
-                    updateAriaLabel(true);
-                } else {
-                    updateAriaLabel(false);
-                }
-
-                // Toggle theme on button click
-                themeToggle.addEventListener('click', function() {
-                    document.body.classList.toggle('light-mode');
-                    
-                    if (document.body.classList.contains('light-mode')) {
-                        themeIcon.classList.remove('fa-moon');
-                        themeIcon.classList.add('fa-sun');
-                        localStorage.setItem('theme', 'light');
-                        updateAriaLabel(true);
-                    } else {
-                        themeIcon.classList.remove('fa-sun');
-                        themeIcon.classList.add('fa-moon');
-                        localStorage.setItem('theme', 'dark');
-                        updateAriaLabel(false);
+            const isLightMode = document.body.classList.contains('light-mode');
+            const iconClass = isLightMode ? 'fa-sun' : 'fa-moon';
+            const ariaLabel = isLightMode ? 'Switch to dark mode' : 'Switch to light mode';
+            
+            // Update both buttons
+            [themeToggle, themeToggleDesktop].forEach(btn => {
+                if (btn) {
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-moon', 'fa-sun');
+                        icon.classList.add(iconClass);
                     }
-                });
-            }
-        } else {
-            console.error('Theme toggle button not found');
+                    btn.setAttribute('aria-label', ariaLabel);
+                }
+            });
+            
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+        }
+        
+        // Initialize theme from localStorage
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        if (currentTheme === 'light') {
+            document.body.classList.add('light-mode');
+            [themeToggle, themeToggleDesktop].forEach(btn => {
+                if (btn) {
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-moon');
+                        icon.classList.add('fa-sun');
+                    }
+                    btn.setAttribute('aria-label', 'Switch to dark mode');
+                }
+            });
+        }
+        
+        // Add click handlers to both buttons
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+        if (themeToggleDesktop) {
+            themeToggleDesktop.addEventListener('click', toggleTheme);
         }
 
         // Helper function to get user-friendly error messages

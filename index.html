@@ -684,38 +684,117 @@
             border: 1px solid #c2410c;
         }
         .risk-score-section {
-            margin-bottom: 16px;
-        }
-        .risk-score-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            gap: 20px;
+            margin-bottom: 16px;
         }
         .risk-score-label {
             color: #9ca3af;
             font-size: 11px;
             font-family: var(--font-mono);
             text-transform: uppercase;
+            margin-bottom: 4px;
         }
-        .risk-score-value {
-            color: #f87171;
-            font-family: var(--font-mono);
-            font-size: 14px;
-            font-weight: bold;
+        
+        /* Circular Risk Gauge */
+        .circular-gauge {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
         }
-        .progress-bar-container {
+        .circular-gauge-ring {
             width: 100%;
-            background-color: #1f2937;
-            border-radius: 9999px;
-            height: 10px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            background: linear-gradient(to right, #dc2626, #ef4444);
             height: 100%;
-            border-radius: 9999px;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Background ring */
+        .circular-gauge-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: #1f2937;
+        }
+        /* Colored progress ring using conic-gradient */
+        .circular-gauge-ring::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                var(--gauge-color) calc(var(--gauge-percentage) * 1%),
+                transparent calc(var(--gauge-percentage) * 1%)
+            );
+            mask: radial-gradient(
+                circle,
+                transparent 55%,
+                black 55%
+            );
+            -webkit-mask: radial-gradient(
+                circle,
+                transparent 55%,
+                black 55%
+            );
+        }
+        .circular-gauge-center {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .circular-gauge-score {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1;
+            color: #ffffff;
+        }
+        .circular-gauge-max {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+        
+        /* Color variants for different risk levels */
+        .gauge-safe {
+            --gauge-color: #10b981; /* Green */
+        }
+        .gauge-warning {
+            --gauge-color: #fbbf24; /* Yellow */
+        }
+        .gauge-danger {
+            --gauge-color: #ef4444; /* Red */
+        }
+        
+        /* Pulsing animation for high risk (>90) */
+        @keyframes pulse-ring {
+            0%, 100% {
+                box-shadow: 0 0 0 0 var(--gauge-color);
+                filter: brightness(1);
+            }
+            50% {
+                box-shadow: 0 0 20px 5px var(--gauge-color);
+                filter: brightness(1.2);
+            }
+        }
+        .circular-gauge-ring.pulse-high-risk::after {
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+        
+        .risk-score-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .victims-info {
             display: flex;
@@ -956,12 +1035,16 @@
 
                             <!-- Risk Score -->
                             <div class="risk-score-section">
-                                <div class="risk-score-header">
-                                    <span class="risk-score-label">RISK SCORE</span>
-                                    <span class="risk-score-value">98/100</span>
+                                <div class="circular-gauge gauge-danger">
+                                    <div class="circular-gauge-ring pulse-high-risk" style="--gauge-percentage: 98;">
+                                        <div class="circular-gauge-center">
+                                            <span class="circular-gauge-score">98</span>
+                                            <span class="circular-gauge-max">/100</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" style="width: 98%"></div>
+                                <div class="risk-score-info">
+                                    <span class="risk-score-label">RISK SCORE</span>
                                 </div>
                             </div>
 
@@ -1001,12 +1084,16 @@
 
                             <!-- Risk Score -->
                             <div class="risk-score-section">
-                                <div class="risk-score-header">
-                                    <span class="risk-score-label">RISK SCORE</span>
-                                    <span class="risk-score-value">85/100</span>
+                                <div class="circular-gauge gauge-danger">
+                                    <div class="circular-gauge-ring" style="--gauge-percentage: 85;">
+                                        <div class="circular-gauge-center">
+                                            <span class="circular-gauge-score">85</span>
+                                            <span class="circular-gauge-max">/100</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" style="width: 85%"></div>
+                                <div class="risk-score-info">
+                                    <span class="risk-score-label">RISK SCORE</span>
                                 </div>
                             </div>
 
@@ -1046,12 +1133,16 @@
 
                             <!-- Risk Score -->
                             <div class="risk-score-section">
-                                <div class="risk-score-header">
-                                    <span class="risk-score-label">RISK SCORE</span>
-                                    <span class="risk-score-value">92/100</span>
+                                <div class="circular-gauge gauge-danger">
+                                    <div class="circular-gauge-ring pulse-high-risk" style="--gauge-percentage: 92;">
+                                        <div class="circular-gauge-center">
+                                            <span class="circular-gauge-score">92</span>
+                                            <span class="circular-gauge-max">/100</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" style="width: 92%"></div>
+                                <div class="risk-score-info">
+                                    <span class="risk-score-label">RISK SCORE</span>
                                 </div>
                             </div>
 
@@ -1091,12 +1182,16 @@
 
                             <!-- Risk Score -->
                             <div class="risk-score-section">
-                                <div class="risk-score-header">
-                                    <span class="risk-score-label">RISK SCORE</span>
-                                    <span class="risk-score-value">78/100</span>
+                                <div class="circular-gauge gauge-danger">
+                                    <div class="circular-gauge-ring" style="--gauge-percentage: 78;">
+                                        <div class="circular-gauge-center">
+                                            <span class="circular-gauge-score">78</span>
+                                            <span class="circular-gauge-max">/100</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" style="width: 78%"></div>
+                                <div class="risk-score-info">
+                                    <span class="risk-score-label">RISK SCORE</span>
                                 </div>
                             </div>
 
@@ -1136,12 +1231,16 @@
 
                             <!-- Risk Score -->
                             <div class="risk-score-section">
-                                <div class="risk-score-header">
-                                    <span class="risk-score-label">RISK SCORE</span>
-                                    <span class="risk-score-value">95/100</span>
+                                <div class="circular-gauge gauge-danger">
+                                    <div class="circular-gauge-ring pulse-high-risk" style="--gauge-percentage: 95;">
+                                        <div class="circular-gauge-center">
+                                            <span class="circular-gauge-score">95</span>
+                                            <span class="circular-gauge-max">/100</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" style="width: 95%"></div>
+                                <div class="risk-score-info">
+                                    <span class="risk-score-label">RISK SCORE</span>
                                 </div>
                             </div>
 

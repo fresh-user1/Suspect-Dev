@@ -254,6 +254,77 @@
             }
         }
 
+        /* Language Switcher - Pill Toggle with Flags */
+        .language-switcher {
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 4px;
+            width: 80px;
+            height: 40px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            order: 2.5; /* Between nav-links and theme-toggle */
+        }
+
+        .language-switcher:hover {
+            border-color: var(--hazard-orange);
+        }
+
+        .lang-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 2;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .lang-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: var(--hazard-orange);
+            border-radius: 16px;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1;
+        }
+
+        .language-switcher[data-lang="en"] .lang-slider {
+            transform: translateX(calc(100% + 4px));
+        }
+
+        /* Desktop: Language switcher visible */
+        @media (min-width: 769px) {
+            header nav > .language-switcher {
+                display: flex;
+            }
+            .nav-links .language-switcher {
+                display: none;
+            }
+        }
+
+        /* Mobile: Language switcher inside menu */
+        @media (max-width: 768px) {
+            header nav > .language-switcher {
+                display: none;
+            }
+            
+            .nav-links .language-switcher {
+                display: flex;
+                order: 2;
+                margin: 10px 0 0 auto;
+                box-shadow: 0 0 6px rgba(255, 69, 0, 0.2);
+            }
+        }
+
         /* Hero Section */
         #hero {
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
@@ -989,16 +1060,30 @@
                 <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
                     <i class="fa-solid fa-moon"></i>
                 </button>
+
+                <!-- Desktop: Language Switcher -->
+                <div class="language-switcher" id="langSwitcher" data-lang="id" aria-label="Switch language">
+                    <span class="lang-slider"></span>
+                    <span class="lang-option" data-lang="id">🇮🇩</span>
+                    <span class="lang-option" data-lang="en">🇺🇸</span>
+                </div>
                 
                 <div class="nav-links" id="navLinks">
-                    <a href="#about">Tentang</a>
-                    <a href="#point-system">Point System</a>
-                    <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;" aria-label="Submit a report">Laporkan</a>
+                    <a href="#about" data-i18n="nav-about">Tentang</a>
+                    <a href="#point-system" data-i18n="nav-points">Point System</a>
+                    <a href="#report" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.75rem;" aria-label="Submit a report" data-i18n="nav-report">Laporkan</a>
                     
                     <!-- Mobile: Theme Toggle di bawah Laporkan -->
                     <button class="theme-toggle" id="themeToggleMobile" aria-label="Switch to light mode">
                         <i class="fa-solid fa-moon"></i>
                     </button>
+
+                    <!-- Mobile: Language Switcher -->
+                    <div class="language-switcher" id="langSwitcherMobile" data-lang="id" aria-label="Switch language">
+                        <span class="lang-slider"></span>
+                        <span class="lang-option" data-lang="id">🇮🇩</span>
+                        <span class="lang-option" data-lang="en">🇺🇸</span>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -1009,17 +1094,17 @@
         <canvas id="hero-canvas" aria-hidden="true"></canvas>
         <div class="hero-content fade-in">
             <div class="badge-beta">Experimental Build v0.1</div>
-            <h1 class="hero-title">On-Chain Risk Registry</h1>
+            <h1 class="hero-title" data-i18n="hero-title">On-Chain Risk Registry</h1>
             <p class="hero-subtitle" id="hero-subtitle-text"></p>
-            <p class="hero-disclaimer">
+            <p class="hero-disclaimer" data-i18n="hero-disclaimer">
                 *Platform masih dalam tahap pengembangan aktif. Data yang ditampilkan bersifat preliminary dan memerlukan verifikasi komunitas.
             </p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <a href="#check" class="btn btn-primary" id="check-wallet-btn" aria-label="Check wallet for risk">
-                    <i class="fa-solid fa-magnifying-glass"></i> Cek Wallet
+                    <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="hero-btn-check">Cek Wallet</span>
                 </a>
                 <a href="#about" class="btn btn-outline" aria-label="Learn more about the platform">
-                    <i class="fa-solid fa-circle-info"></i> Pelajari
+                    <i class="fa-solid fa-circle-info"></i> <span data-i18n="hero-btn-learn">Pelajari</span>
                 </a>
             </div>
         </div>
@@ -1032,8 +1117,8 @@
     <section id="about" class="section-padding">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title" style="border: none; display: inline-block;">Apa Ini?</h2>
-                <p>
+                <h2 class="section-title" style="border: none; display: inline-block;" data-i18n="about-title">Apa Ini?</h2>
+                <p data-i18n="about-desc">
                     SUSPECTED adalah registry eksperimental yang mencoba memetakan pola transaksi mencurigakan dan histori wallet developer di ekosistem Solana. Bukan alat investasi, melainkan infrastruktur transparansi.
                 </p>
             </div>
@@ -1041,18 +1126,18 @@
             <div class="grid-3">
                 <div class="card">
                     <div class="card-icon"><i class="fa-solid fa-database"></i></div>
-                    <h3>On-Chain Native</h3>
-                    <p>Semua data bersumber dari blockchain Solana yang publik. Tidak ada data rahasia atau insider information.</p>
+                    <h3 data-i18n="about-card1-title">On-Chain Native</h3>
+                    <p data-i18n="about-card1-desc">Semua data bersumber dari blockchain Solana yang publik. Tidak ada data rahasia atau insider information.</p>
                 </div>
                 <div class="card">
                     <div class="card-icon"><i class="fa-solid fa-users"></i></div>
-                    <h3>Crowdsourced</h3>
-                    <p>Komunitas dapat mengajukan bukti transaksi (tx hash) yang kemudian diverifikasi bersama, bukan sentralisasi otoritas tunggal.</p>
+                    <h3 data-i18n="about-card2-title">Crowdsourced</h3>
+                    <p data-i18n="about-card2-desc">Komunitas dapat mengajukan bukti transaksi (tx hash) yang kemudian diverifikasi bersama, bukan sentralisasi otoritas tunggal.</p>
                 </div>
                 <div class="card">
                     <div class="card-icon"><i class="fa-solid fa-code-branch"></i></div>
-                    <h3>Open Structure</h3>
-                    <p>Struktur data dirancang agar bisa di-integrasikan wallet lain via API. Bukan walled garden.</p>
+                    <h3 data-i18n="about-card3-title">Open Structure</h3>
+                    <p data-i18n="about-card3-desc">Struktur data dirancang agar bisa di-integrasikan wallet lain via API. Bukan walled garden.</p>
                 </div>
             </div>
 
@@ -1061,17 +1146,17 @@
                 <div class="feature-row">
                     <div class="feature-content">
                         <!-- PERUBAHAN: Warna adaptif untuk Bedanya dengan Platform Lain -->
-                        <h3 class="differentiation-title" style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px;">
+                        <h3 class="differentiation-title" style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px;" data-i18n="about-diff-title">
                             Bedanya dengan Platform Lain?
                         </h3>
-                        <p style="color: #888; margin-bottom: 20px;">
+                        <p style="color: #888; margin-bottom: 20px;" data-i18n="about-diff-desc">
                             Banyak scanner yang fokus pada kontrak token (honeypot, mint authority). Kami fokus pada <strong>actorbehaviour</strong> — pola historis wallet developer yang sama terulang di berbagai project.
                         </p>
                         <ul class="feature-list">
-                            <li>Tracking cross-project (wallet yang sama di token berbeda)</li>
-                            <li>Fokus pada liquidity drain pattern, bukan sekadar code audit</li>
-                            <li>Sistem reputasi validator terbuka (siapapun bisa jadi verifier)</li>
-                            <li>Tidak ada "pay to remove" label — transparansi mutlak</li>
+                            <li data-i18n="about-diff-point1">Tracking cross-project (wallet yang sama di token berbeda)</li>
+                            <li data-i18n="about-diff-point2">Fokus pada liquidity drain pattern, bukan sekadar code audit</li>
+                            <li data-i18n="about-diff-point3">Sistem reputasi validator terbuka (siapapun bisa jadi verifier)</li>
+                            <li data-i18n="about-diff-point4">Tidak ada "pay to remove" label — transparansi mutlak</li>
                         </ul>
                     </div>
                     <div class="feature-visual">
@@ -1086,8 +1171,8 @@
     <section id="scammer-wallets" class="section-padding" style="background: var(--bg-color);">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Latest Scammer Wallets</h2>
-                <p>
+                <h2 class="section-title" data-i18n="scammer-title">Latest Scammer Wallets</h2>
+                <p data-i18n="scammer-desc">
                     Registry terbaru dari wallet yang teridentifikasi melakukan aktivitas mencurigakan atau terkonfirmasi sebagai scammer.
                 </p>
             </div>
@@ -1345,8 +1430,8 @@
     <section id="point-system" class="section-padding">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Point & Incentive System</h2>
-                <p>
+                <h2 class="section-title" data-i18n="points-title">Point & Incentive System</h2>
+                <p data-i18n="points-desc">
                     Mekanisme awal untuk membangun database: Kontributor yang memberikan bukti valid akan mendapatkan poin yang nantinya menjadi parameter alokasi reward.
                 </p>
             </div>
@@ -1356,26 +1441,26 @@
                 
                 <div class="point-step">
                     <div class="step-number">01</div>
-                    <h4>Submit Bukti</h4>
-                    <p>Laporkan wallet dev + tx hash rugpull</p>
+                    <h4 data-i18n="points-step1-title">Submit Bukti</h4>
+                    <p data-i18n="points-step1-desc">Laporkan wallet dev + tx hash rugpull</p>
                 </div>
                 
                 <div class="point-step">
                     <div class="step-number">02</div>
-                    <h4>Verifikasi</h4>
-                    <p>Validator komunitas cek validitas on-chain</p>
+                    <h4 data-i18n="points-step2-title">Verifikasi</h4>
+                    <p data-i18n="points-step2-desc">Validator komunitas cek validitas on-chain</p>
                 </div>
                 
                 <div class="point-step">
                     <div class="step-number">03</div>
-                    <h4>Dapat Poin</h4>
-                    <p>Point masuk ke akun contributor</p>
+                    <h4 data-i18n="points-step3-title">Dapat Poin</h4>
+                    <p data-i18n="points-step3-desc">Point masuk ke akun contributor</p>
                 </div>
                 
                 <div class="point-step">
                     <div class="step-number">04</div>
-                    <h4>Airdrop Allocation</h4>
-                    <p>Poin + Token Hold = Alokasi</p>
+                    <h4 data-i18n="points-step4-title">Airdrop Allocation</h4>
+                    <p data-i18n="points-step4-desc">Poin + Token Hold = Alokasi</p>
                 </div>
             </div>
 
@@ -1421,17 +1506,17 @@
     <section id="check" class="section-padding" style="background: var(--bg-secondary);">
         <div class="container" style="max-width: 600px;">
             <div class="section-header">
-                <h2 class="section-title" style="border: none; display: inline-block;">Cek Wallet</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Database masih terbatas (alpha)</p>
+                <h2 class="section-title" style="border: none; display: inline-block;" data-i18n="check-title">Cek Wallet</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="check-subtitle">Database masih terbatas (alpha)</p>
             </div>
             
             <div class="form-box">
                 <div class="form-group">
-                    <label for="walletInput" class="form-label">Solana Wallet Address</label>
-                    <input type="text" class="form-control" placeholder="7xkx... atau 44 karakter full address" id="walletInput" aria-describedby="walletInputHelp">
+                    <label for="walletInput" class="form-label" data-i18n="check-label">Solana Wallet Address</label>
+                    <input type="text" class="form-control" placeholder="7xkx... atau 44 karakter full address" id="walletInput" aria-describedby="walletInputHelp" data-i18n-placeholder="check-placeholder">
                 </div>
                 <button onclick="debouncedCheckWallet()" class="btn btn-primary" style="width: 100%; justify-content: center;" aria-label="Scan database for wallet risk">
-                    <i class="fa-solid fa-search"></i> Scan Database
+                    <i class="fa-solid fa-search"></i> <span data-i18n="check-btn">Scan Database</span>
                 </button>
                 <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid #333; display: none; font-family: var(--font-mono); font-size: 0.85rem;">
                     <!-- Result akan muncul di sini -->
@@ -1444,8 +1529,8 @@
     <section id="report" class="section-padding">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Submit Evidence</h2>
-                <p>Laporkan bukti rugpull untuk mendapatkan poin kontribusi</p>
+                <h2 class="section-title" data-i18n="report-title">Submit Evidence</h2>
+                <p data-i18n="report-desc">Laporkan bukti rugpull untuk mendapatkan poin kontribusi</p>
             </div>
             
             <div class="form-box">
@@ -1756,6 +1841,196 @@
         // Initialize both toggles
         initThemeToggle('themeToggle');
         initThemeToggle('themeToggleMobile');
+
+        // ===== Language Switcher Functionality =====
+        
+        // Translations object
+        const translations = {
+            id: {
+                // Navigation
+                'nav-about': 'Tentang',
+                'nav-points': 'Point System',
+                'nav-report': 'Laporkan',
+                
+                // Hero Section
+                'hero-title': 'On-Chain Risk Registry',
+                'hero-disclaimer': '*Platform masih dalam tahap pengembangan aktif. Data yang ditampilkan bersifat preliminary dan memerlukan verifikasi komunitas.',
+                'hero-btn-check': 'Cek Wallet',
+                'hero-btn-learn': 'Pelajari',
+                
+                // About Section
+                'about-title': 'Apa Ini?',
+                'about-desc': 'SUSPECTED adalah registry eksperimental yang mencoba memetakan pola transaksi mencurigakan dan histori wallet developer di ekosistem Solana. Bukan alat investasi, melainkan infrastruktur transparansi.',
+                'about-card1-title': 'On-Chain Native',
+                'about-card1-desc': 'Semua data bersumber dari blockchain Solana yang publik. Tidak ada data rahasia atau insider information.',
+                'about-card2-title': 'Crowdsourced',
+                'about-card2-desc': 'Komunitas dapat mengajukan bukti transaksi (tx hash) yang kemudian diverifikasi bersama, bukan sentralisasi otoritas tunggal.',
+                'about-card3-title': 'Open Structure',
+                'about-card3-desc': 'Struktur data dirancang agar bisa di-integrasikan wallet lain via API. Bukan walled garden.',
+                'about-diff-title': 'Bedanya dengan Platform Lain?',
+                'about-diff-desc': 'Banyak scanner yang fokus pada kontrak token (honeypot, mint authority). Kami fokus pada <strong>actor behaviour</strong> — pola historis wallet developer yang sama terulang di berbagai project.',
+                'about-diff-point1': 'Tracking cross-project (wallet yang sama di token berbeda)',
+                'about-diff-point2': 'Fokus pada liquidity drain pattern, bukan sekadar code audit',
+                'about-diff-point3': 'Sistem reputasi validator terbuka (siapapun bisa jadi verifier)',
+                'about-diff-point4': 'Tidak ada "pay to remove" label — transparansi mutlak',
+                
+                // Scammer Wallets Section
+                'scammer-title': 'Latest Scammer Wallets',
+                'scammer-desc': 'Registry terbaru dari wallet yang teridentifikasi melakukan aktivitas mencurigakan atau terkonfirmasi sebagai scammer.',
+                
+                // Point System Section
+                'points-title': 'Point & Incentive System',
+                'points-desc': 'Mekanisme awal untuk membangun database: Kontributor yang memberikan bukti valid akan mendapatkan poin yang nantinya menjadi parameter alokasi reward.',
+                'points-step1-title': 'Submit Bukti',
+                'points-step1-desc': 'Laporkan wallet dev + tx hash rugpull',
+                'points-step2-title': 'Verifikasi',
+                'points-step2-desc': 'Validator komunitas cek validitas on-chain',
+                'points-step3-title': 'Dapat Poin',
+                'points-step3-desc': 'Point masuk ke akun contributor',
+                'points-step4-title': 'Airdrop Allocation',
+                'points-step4-desc': 'Poin + Token Hold = Alokasi',
+                
+                // Check Wallet Section
+                'check-title': 'Cek Wallet',
+                'check-subtitle': 'Database masih terbatas (alpha)',
+                'check-label': 'Solana Wallet Address',
+                'check-placeholder': '7xkx... atau 44 karakter full address',
+                'check-btn': 'Scan Database',
+                
+                // Report Section
+                'report-title': 'Submit Evidence',
+                'report-desc': 'Laporkan bukti rugpull untuk mendapatkan poin kontribusi'
+            },
+            en: {
+                // Navigation
+                'nav-about': 'About',
+                'nav-points': 'Point System',
+                'nav-report': 'Report',
+                
+                // Hero Section
+                'hero-title': 'On-Chain Risk Registry',
+                'hero-disclaimer': '*Platform is still in active development. Data shown is preliminary and requires community verification.',
+                'hero-btn-check': 'Check Wallet',
+                'hero-btn-learn': 'Learn More',
+                
+                // About Section
+                'about-title': 'What Is This?',
+                'about-desc': 'SUSPECTED is an experimental registry that attempts to map suspicious transaction patterns and developer wallet history in the Solana ecosystem. Not an investment tool, but a transparency infrastructure.',
+                'about-card1-title': 'On-Chain Native',
+                'about-card1-desc': 'All data is sourced from the public Solana blockchain. No secret data or insider information.',
+                'about-card2-title': 'Crowdsourced',
+                'about-card2-desc': 'Community can submit transaction evidence (tx hash) which is then verified together, not a centralized single authority.',
+                'about-card3-title': 'Open Structure',
+                'about-card3-desc': 'Data structure designed to be integrated by other wallets via API. Not a walled garden.',
+                'about-diff-title': 'What Makes It Different?',
+                'about-diff-desc': 'Many scanners focus on token contracts (honeypot, mint authority). We focus on <strong>actor behaviour</strong> — historical patterns of the same developer wallet repeated across different projects.',
+                'about-diff-point1': 'Cross-project tracking (same wallet across different tokens)',
+                'about-diff-point2': 'Focus on liquidity drain patterns, not just code audits',
+                'about-diff-point3': 'Open validator reputation system (anyone can be a verifier)',
+                'about-diff-point4': 'No "pay to remove" labels — absolute transparency',
+                
+                // Scammer Wallets Section
+                'scammer-title': 'Latest Scammer Wallets',
+                'scammer-desc': 'Latest registry of wallets identified performing suspicious activities or confirmed as scammers.',
+                
+                // Point System Section
+                'points-title': 'Point & Incentive System',
+                'points-desc': 'Initial mechanism to build the database: Contributors who provide valid evidence will receive points that will later become reward allocation parameters.',
+                'points-step1-title': 'Submit Evidence',
+                'points-step1-desc': 'Report dev wallet + rugpull tx hash',
+                'points-step2-title': 'Verification',
+                'points-step2-desc': 'Community validators check on-chain validity',
+                'points-step3-title': 'Earn Points',
+                'points-step3-desc': 'Points added to contributor account',
+                'points-step4-title': 'Airdrop Allocation',
+                'points-step4-desc': 'Points + Token Hold = Allocation',
+                
+                // Check Wallet Section
+                'check-title': 'Check Wallet',
+                'check-subtitle': 'Database still limited (alpha)',
+                'check-label': 'Solana Wallet Address',
+                'check-placeholder': '7xkx... or 44 character full address',
+                'check-btn': 'Scan Database',
+                
+                // Report Section
+                'report-title': 'Submit Evidence',
+                'report-desc': 'Report rugpull evidence to earn contribution points'
+            }
+        };
+
+        // Function to change language
+        function changeLanguage(lang) {
+            // Validate language
+            if (!translations[lang]) {
+                console.error('Language not supported:', lang);
+                return;
+            }
+
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    element.innerHTML = translations[lang][key];
+                }
+            });
+
+            // Update placeholder for input with data-i18n-placeholder
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+
+            // Save language preference to localStorage
+            localStorage.setItem('language', lang);
+
+            // Update all language switchers
+            document.querySelectorAll('.language-switcher').forEach(switcher => {
+                switcher.setAttribute('data-lang', lang);
+            });
+        }
+
+        // Initialize language switcher
+        function initLanguageSwitcher(switcherId) {
+            const switcher = document.getElementById(switcherId);
+            if (!switcher) return;
+
+            // Get saved language or default to 'id' (Indonesian)
+            const currentLang = localStorage.getItem('language') || 'id';
+            
+            // Apply saved language
+            switcher.setAttribute('data-lang', currentLang);
+            changeLanguage(currentLang);
+
+            // Add click event to the switcher
+            switcher.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const currentLang = this.getAttribute('data-lang');
+                const newLang = currentLang === 'id' ? 'en' : 'id';
+                
+                changeLanguage(newLang);
+            });
+
+            // Add click event to individual lang options
+            const langOptions = switcher.querySelectorAll('.lang-option');
+            langOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const lang = this.getAttribute('data-lang');
+                    changeLanguage(lang);
+                });
+            });
+        }
+
+        // Initialize both language switchers
+        initLanguageSwitcher('langSwitcher');
+        initLanguageSwitcher('langSwitcherMobile');
 
         // Helper function to get user-friendly error messages
         function getErrorMessage(status, context = 'general') {

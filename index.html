@@ -615,6 +615,60 @@
         .mt-12 {
             margin-top: 48px;
         }
+
+        /* Terminal-style loading log */
+        .terminal-log {
+            font-family: var(--font-mono);
+            color: #00ff00;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            padding: 15px;
+            background: #000;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column-reverse;
+            overflow: hidden;
+        }
+
+        .terminal-line {
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            animation: terminalFadeIn 0.3s forwards;
+        }
+
+        @keyframes terminalFadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 14px;
+            background: #00ff00;
+            margin-left: 4px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* Mobile responsive placement */
+        @media (max-width: 480px) {
+            .terminal-log {
+                font-size: 0.75rem;
+                padding: 12px;
+            }
+            
+            .terminal-line {
+                justify-content: flex-end;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1448,9 +1502,65 @@
             return messages[status] || 'HTTP error! status: ' + status;
         }
 
+        // Async function to simulate fetching wallet data from Blockchair API
+        async function fetchWalletData(address) {
+            // Validate address length
+            if (address.length < 32) {
+                throw new Error('Invalid Solana address');
+            }
+
+            // Simulate network delay (1.5 seconds)
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Generate mock data
+            const data = {
+                address: address,
+                balance: (Math.random() * 100).toFixed(4) + ' SOL',
+                transactionCount: Math.floor(Math.random() * 500) + 10,
+                firstSeen: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                riskScore: 0,
+                tags: []
+            };
+
+            // Check if address contains "7xkx"
+            if (address.includes('7xkx')) {
+                data.riskScore = 95;
+                data.tags = ['liquidity_drainer', 'serial_deployer'];
+            } else {
+                // Random address: riskScore between 10-40
+                data.riskScore = Math.floor(Math.random() * 31) + 10;
+                data.tags = ['unknown'];
+            }
+
+            return data;
+        }
+
+        // Helper function to show terminal loading log
+        async function showTerminalLog(resultDiv, messages) {
+            resultDiv.innerHTML = '<div class="terminal-log"></div>';
+            const terminalLog = resultDiv.querySelector('.terminal-log');
+            
+            for (let i = 0; i < messages.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                line.innerHTML = `<span>${messages[i]}</span><span class="terminal-cursor"></span>`;
+                terminalLog.insertBefore(line, terminalLog.firstChild);
+            }
+
+            // Remove cursor from last line after all messages are shown
+            await new Promise(resolve => setTimeout(resolve, 400));
+            const cursors = terminalLog.querySelectorAll('.terminal-cursor');
+            cursors.forEach((cursor, index) => {
+                if (index < cursors.length - 1) {
+                    cursor.remove();
+                }
+            });
+        }
+
         // Async function to GET wallet data from API
         async function checkWallet() {
-            const input = document.getElementById('walletInput').value;
+            const input = document.getElementById('walletInput').value.trim();
             const resultDiv = document.getElementById('checkResult');
             
             if (input.length < 10) {
@@ -1458,61 +1568,75 @@
                 return;
             }
 
-            // Show loading state
+            // Show terminal loading state
             resultDiv.style.display = 'block';
-            resultDiv.style.borderColor = '#333';
-            resultDiv.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mencari di database...';
+            resultDiv.style.borderColor = '#00ff00';
+
+            const terminalMessages = [
+                'Connecting to Solana RPC...',
+                'Querying Blockchair API...',
+                'Analyzing patterns...',
+                'Finalizing report...'
+            ];
 
             try {
-                // Fetch wallet data from API
-                const response = await fetch(`/api/wallet/${encodeURIComponent(input)}`);
+                // Show terminal loading animation
+                await showTerminalLog(resultDiv, terminalMessages);
+
+                // Fetch wallet data
+                const data = await fetchWalletData(input);
                 
-                if (!response.ok) {
-                    throw new Error(getErrorMessage(response.status, 'wallet'));
-                }
-                
-                const data = await response.json();
-                
-                // Display results based on API response
-                if (data.isRisky || data.status === 'confirmed_scammer') {
+                // Display results based on risk score
+                if (data.riskScore >= 70) {
                     resultDiv.style.borderColor = '#ff3333';
                     resultDiv.innerHTML = `
-                        <div style="color: #ff3333; font-weight: bold; margin-bottom: 10px;">
+                        <div style="color: #ff3333; font-weight: bold; margin-bottom: 15px; font-family: var(--font-mono);">
                             <i class="fa-solid fa-triangle-exclamation"></i> HIGH RISK DETECTED
                         </div>
-                        <div>Status: ${data.status || 'Confirmed Scammer'}</div>
-                        <div>Insiden: ${data.incidents || 'N/A'}</div>
-                        <div>Total Loss: ${data.totalLoss || 'N/A'}</div>
-                        <div style="margin-top: 10px; color: #666;">Last active: ${data.lastActive || 'N/A'}</div>
+                        <div style="font-family: var(--font-mono); line-height: 1.8;">
+                            <div><strong>Address:</strong> ${data.address.substring(0, 8)}...${data.address.substring(data.address.length - 8)}</div>
+                            <div><strong>Balance:</strong> ${data.balance}</div>
+                            <div><strong>Transactions:</strong> ${data.transactionCount}</div>
+                            <div><strong>First Seen:</strong> ${data.firstSeen}</div>
+                            <div><strong>Risk Score:</strong> <span style="color: #ff3333;">${data.riskScore}/100</span></div>
+                            <div><strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: #ff3333; padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; margin-right: 5px;">${tag}</span>`).join('')}</div>
+                        </div>
                     `;
                     showNotification('High risk wallet detected!', 'error');
                 } else {
                     resultDiv.style.borderColor = '#00ff00';
                     resultDiv.innerHTML = `
-                        <div style="color: #00ff00; margin-bottom: 10px;">
-                            <i class="fa-solid fa-check-circle"></i> NOT IN DATABASE
+                        <div style="color: #00ff00; margin-bottom: 15px; font-family: var(--font-mono);">
+                            <i class="fa-solid fa-check-circle"></i> LOW RISK
                         </div>
-                        <div>Wallet ini belum terdaftar di registry kami.</div>
-                        <div style="color: #666; margin-top: 10px; font-size: 0.8rem;">
-                            *Belum terdaftar ≠ Aman. Selalu lakukan riset tambahan.
+                        <div style="font-family: var(--font-mono); line-height: 1.8;">
+                            <div><strong>Address:</strong> ${data.address.substring(0, 8)}...${data.address.substring(data.address.length - 8)}</div>
+                            <div><strong>Balance:</strong> ${data.balance}</div>
+                            <div><strong>Transactions:</strong> ${data.transactionCount}</div>
+                            <div><strong>First Seen:</strong> ${data.firstSeen}</div>
+                            <div><strong>Risk Score:</strong> <span style="color: #00ff00;">${data.riskScore}/100</span></div>
+                            <div><strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: #666; padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; margin-right: 5px;">${tag}</span>`).join('')}</div>
+                            <div style="color: #666; margin-top: 10px; font-size: 0.8rem;">
+                                *Low risk score does not guarantee safety. Always DYOR.
+                            </div>
                         </div>
                     `;
-                    showNotification('Wallet checked successfully', 'success');
+                    showNotification('Wallet scanned successfully', 'success');
                 }
             } catch (error) {
                 // Error handling
                 console.error('Error checking wallet:', error);
                 resultDiv.style.borderColor = '#ff9800';
                 resultDiv.innerHTML = `
-                    <div style="color: #ff9800; font-weight: bold; margin-bottom: 10px;">
+                    <div style="color: #ff9800; font-weight: bold; margin-bottom: 10px; font-family: var(--font-mono);">
                         <i class="fa-solid fa-exclamation-circle"></i> ERROR
                     </div>
-                    <div>Gagal terhubung ke API. Silakan coba lagi nanti.</div>
-                    <div style="color: #666; margin-top: 10px; font-size: 0.8rem;">
-                        Error: ${error.message}
+                    <div style="font-family: var(--font-mono);">${error.message}</div>
+                    <div style="color: #666; margin-top: 10px; font-size: 0.8rem; font-family: var(--font-mono);">
+                        Please ensure the address is at least 32 characters long.
                     </div>
                 `;
-                showNotification('Failed to check wallet: ' + error.message, 'error');
+                showNotification('Error: ' + error.message, 'error');
             }
         }
 

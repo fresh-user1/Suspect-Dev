@@ -510,6 +510,51 @@
             max-width: 600px; margin: 30px auto 0; line-height: 1.6;
         }
 
+        /* Live Threat Feed Marquee */
+        .threat-feed-marquee {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #000000;
+            border-top: 2px solid var(--hazard-orange);
+            z-index: 9999;
+            overflow: hidden;
+            height: 35px;
+            display: flex;
+            align-items: center;
+        }
+
+        .threat-feed-content {
+            display: flex;
+            white-space: nowrap;
+            animation: scroll-left 60s linear infinite;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-main);
+            padding: 0 20px;
+        }
+
+        .threat-feed-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        .threat-feed-item .emoji {
+            margin-right: 8px;
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero-title { font-size: 2.5rem; }
@@ -1886,5 +1931,36 @@
             });
         });
     </script>
+
+    <!-- Live Threat Feed Marquee -->
+    <div class="threat-feed-marquee">
+        <div class="threat-feed-content">
+            <span class="threat-feed-item"><span class="emoji">⚠️</span> New Report: Wallet 8x7f...3a22 flagged as HONEYPOT</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">🟢</span> Scan Verified: Project Sol...Safe</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">⚠️</span> High Risk: 500 SOL moved from Mixer</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">🔴</span> Alert: Rugpull Pattern Detected 0x3b...9f1e</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">🟢</span> Community Verified: Token AX2...Legitimate</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">⚠️</span> Suspicious Activity: 12K SOL Transfer Chain</span>
+            <span class="threat-feed-item">•</span>
+            <!-- Duplicate content for seamless loop -->
+            <span class="threat-feed-item"><span class="emoji">⚠️</span> New Report: Wallet 8x7f...3a22 flagged as HONEYPOT</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">🟢</span> Scan Verified: Project Sol...Safe</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">⚠️</span> High Risk: 500 SOL moved from Mixer</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">🔴</span> Alert: Rugpull Pattern Detected 0x3b...9f1e</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">🟢</span> Community Verified: Token AX2...Legitimate</span>
+            <span class="threat-feed-item">•</span>
+            <span class="threat-feed-item"><span class="emoji">⚠️</span> Suspicious Activity: 12K SOL Transfer Chain</span>
+            <span class="threat-feed-item">•</span>
+        </div>
+    </div>
 </body>
 </html>

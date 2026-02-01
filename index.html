@@ -124,8 +124,24 @@
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
             padding-top: 70px; position: relative;
             background: radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.1) 0%, rgba(0,0,0,0) 70%);
+            overflow: hidden;
         }
-        .hero-content { text-align: center; max-width: 800px; padding: 0 20px; }
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero-content { 
+            text-align: center; 
+            max-width: 800px; 
+            padding: 0 20px; 
+            position: relative;
+            z-index: 1;
+        }
         .badge-beta {
             display: inline-block; border: 1px solid var(--hazard-orange); color: var(--hazard-orange);
             padding: 4px 12px; font-family: var(--font-mono); font-size: 0.75rem; 
@@ -139,6 +155,20 @@
         .hero-subtitle {
             font-size: 1.1rem; color: var(--text-muted); margin-bottom: 10px;
             font-family: var(--font-mono);
+            min-height: 1.5em;
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: var(--hazard-orange);
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: text-bottom;
+        }
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
         }
         .hero-disclaimer {
             font-size: 0.8rem; color: #666; font-family: var(--font-mono);
@@ -155,8 +185,24 @@
         .btn-primary { 
             background-color: var(--hazard-orange); color: #fff; 
             box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
         .btn-primary:hover { background-color: var(--hazard-dim); transform: translateY(-2px); }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
         .btn-outline { 
             background-color: transparent; border: 1px solid var(--border-color); 
             color: var(--text-main); 
@@ -539,15 +585,16 @@
 
     <!-- Hero Section -->
     <section id="hero">
+        <canvas id="hero-canvas"></canvas>
         <div class="hero-content fade-in">
             <div class="badge-beta">Experimental Build v0.1</div>
             <h1 class="hero-title">On-Chain Risk Registry</h1>
-            <p class="hero-subtitle">Database publik wallet developer yang mencurigakan di Solana</p>
+            <p class="hero-subtitle" id="hero-subtitle-text"></p>
             <p class="hero-disclaimer">
                 *Platform masih dalam tahap pengembangan aktif. Data yang ditampilkan bersifat preliminary dan memerlukan verifikasi komunitas.
             </p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="#check" class="btn btn-primary">
+                <a href="#check" class="btn btn-primary" id="check-wallet-btn">
                     <i class="fa-solid fa-magnifying-glass"></i> Cek Wallet
                 </a>
                 <a href="#about" class="btn btn-outline">
@@ -1117,6 +1164,141 @@
     </footer>
 
     <script>
+        // ===== Hero Section Effects =====
+        
+        // 1. Particle Effect on Canvas
+        (function() {
+            const canvas = document.getElementById('hero-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animationFrameId;
+            
+            // Set canvas size
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Particle class
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    // Wrap around edges
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.y > canvas.height) this.y = 0;
+                    if (this.y < 0) this.y = canvas.height;
+                }
+                
+                draw() {
+                    ctx.fillStyle = 'rgba(255, 69, 0, 0.3)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // Create particles
+            function initParticles() {
+                particles = [];
+                const particleCount = Math.min(50, Math.floor(canvas.width * canvas.height / 10000));
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+            }
+            
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                
+                animationFrameId = requestAnimationFrame(animate);
+            }
+            
+            initParticles();
+            animate();
+            
+            // Reinitialize particles on resize
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                initParticles();
+            });
+        })();
+        
+        // 2. Typing Effect for Subtitle
+        (function() {
+            const subtitleElement = document.getElementById('hero-subtitle-text');
+            if (!subtitleElement) return;
+            
+            const text = 'On-Chain Risk Registry';
+            let index = 0;
+            
+            // Create cursor element
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            
+            function typeText() {
+                if (index < text.length) {
+                    subtitleElement.textContent = text.substring(0, index + 1);
+                    index++;
+                    setTimeout(typeText, 100);
+                } else {
+                    // Add blinking cursor after typing is complete
+                    subtitleElement.appendChild(cursor);
+                }
+            }
+            
+            // Start typing after a short delay
+            setTimeout(typeText, 500);
+        })();
+        
+        // 3. Ripple Effect on Check Wallet Button
+        (function() {
+            const checkWalletBtn = document.getElementById('check-wallet-btn');
+            if (!checkWalletBtn) return;
+            
+            checkWalletBtn.addEventListener('click', function(e) {
+                // Create ripple element
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                
+                // Position ripple at click location
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                this.appendChild(ripple);
+                
+                // Remove ripple after animation
+                setTimeout(() => ripple.remove(), 600);
+            });
+        })();
+        
+        // ===== End Hero Section Effects =====
+
         // Toggle Mobile Menu
         function toggleMenu() {
             const nav = document.getElementById('navLinks');

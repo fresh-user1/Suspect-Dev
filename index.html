@@ -161,7 +161,7 @@
             order: 2; /* Desktop: taruh di kanan */
         }
         
-        /* Efek hover hanya untuk desktop */
+        /* Hover effect for desktop only */
         @media (min-width: 769px) {
             .theme-toggle:hover {
                 background: var(--hazard-orange);
@@ -171,21 +171,21 @@
             }
         }
 
-        /* Desktop: Theme toggle di luar nav-links (posisi semula) */
+        /* Desktop: Theme toggle outside nav-links (original position) */
         @media (min-width: 769px) {
             header nav > .theme-toggle {
                 display: flex;
                 order: 3;
             }
             .nav-links .theme-toggle {
-                display: none; /* Sembunyikan yang di dalam menu */
+                display: none; /* Hide the one inside menu */
             }
         }
 
-        /* Mobile: Theme toggle menjadi sub dari menu */
+        /* Mobile: Theme toggle becomes submenu item */
         @media (max-width: 768px) {
             header nav > .theme-toggle {
-                display: none; /* Sembunyikan standalone toggle */
+                display: none; /* Hide standalone toggle */
             }
             
             .menu-toggle { 
@@ -228,11 +228,11 @@
                 margin-bottom: 0;
             }
             
-            /* Theme Toggle di dalam mobile menu - DI BAWAH LAPORKAN, dengan shadow tipis, tanpa hover */
+            /* Theme Toggle inside mobile menu - BELOW REPORT, with subtle shadow, no hover */
             .nav-links .theme-toggle {
                 display: flex;
-                order: 1; /* Setelah item lain (Laporkan ada di order: 0) */
-                margin: 20px 0 0 auto; /* Jarak dari Laporkan, posisi kanan */
+                order: 1; /* After other items (Report is at order: 0) */
+                margin: 20px 0 0 auto; /* Distance from Report, right position */
                 width: 40px;
                 height: 40px;
                 border-radius: 50%;
@@ -282,21 +282,21 @@
             padding: 4px 12px; font-family: var(--font-mono); font-size: 0.75rem; 
             margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;
         }
-        /* PERUBAHAN: Warna adaptif untuk On-Chain Risk Registry */
+        /* CHANGE: Adaptive color for On-Chain Risk Registry */
         .hero-title {
             font-size: 3.5rem; font-weight: 900; text-transform: uppercase; 
             letter-spacing: 3px; margin-bottom: 20px; line-height: 1.1;
-            color: #e0e0e0; /* Warna terang untuk dark mode */
-            -webkit-text-fill-color: #e0e0e0; /* Override untuk browser WebKit */
+            color: #e0e0e0; /* Light color for dark mode */
+            -webkit-text-fill-color: #e0e0e0; /* Override for WebKit browsers */
         }
         /* Dark color for light mode */
         body.light-mode .hero-title {
             color: #111111; /* Pitch Black for light mode */
             -webkit-text-fill-color: #111111;
         }
-        /* PERUBAHAN: Warna adaptif untuk Bedanya dengan Platform Lain */
+        /* CHANGE: Adaptive color for What's Different from Other Platforms */
         .differentiation-title {
-            color: #e0e0e0; /* Warna terang untuk dark mode */
+            color: #e0e0e0; /* Light color for dark mode */
         }
         /* Dark color for light mode */
         body.light-mode .differentiation-title {
@@ -2103,7 +2103,7 @@
         `;
         document.head.appendChild(style);
 
-        // Smooth scroll untuk anchor links
+        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();

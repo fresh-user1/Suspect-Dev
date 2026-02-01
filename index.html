@@ -369,6 +369,30 @@
             outline: none; border-color: var(--hazard-orange); 
             box-shadow: 0 0 10px rgba(255,69,0,0.1);
         }
+        .form-control.error {
+            border-color: var(--alert-red);
+        }
+        .error-message {
+            display: none;
+            color: var(--alert-red);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-family: var(--font-main);
+        }
+        .error-message.show {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .char-counter {
+            font-size: 0.75rem;
+            text-align: right;
+            margin-top: 5px;
+            color: var(--text-muted);
+        }
+        .char-counter.warning {
+            color: #ff8800;
+        }
 
         /* Footer */
         footer { 
@@ -396,6 +420,43 @@
             .point-flow { flex-direction: column; gap: 30px; }
             .connector { display: none; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .roadmap-container { padding-left: 10px; }
+            .roadmap-line { left: 10px; }
+            .roadmap-item { padding-left: 45px; }
+            .roadmap-dot { left: 1px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2rem; }
+            .grid-3 .card { margin: 0 10px; }
+            .roadmap-container { padding-left: 5px; }
+            .roadmap-line { left: 5px; }
+            .roadmap-item { padding-left: 35px; }
+            .roadmap-dot { left: -4px; }
+            .roadmap-title { font-size: 1rem; word-wrap: break-word; }
+            .roadmap-desc { font-size: 0.85rem; word-wrap: break-word; }
+            .roadmap-list { font-size: 0.8rem; }
+            
+            /* Point flow vertical with down arrows */
+            .point-flow { flex-direction: column; gap: 20px; }
+            .point-step::after {
+                content: '\f107';
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                display: block;
+                margin-top: 15px;
+                font-size: 1.5rem;
+                color: var(--hazard-orange);
+            }
+            .point-step:last-child::after {
+                display: none;
+            }
+            
+            /* Scan Database button touch-friendly */
+            .btn-primary {
+                padding: 16px 24px;
+                max-width: 100%;
+            }
         }
 
         /* Animations */
@@ -1112,26 +1173,35 @@
                 <form id="reportForm" onsubmit="handleReport(event)">
                     <div class="form-group">
                         <label class="form-label">Developer Wallet Address</label>
-                        <input type="text" class="form-control" required placeholder="Alamat wallet yang dicurigai">
+                        <input type="text" id="walletAddress" class="form-control" required placeholder="Alamat wallet yang dicurigai">
+                        <div class="error-message" id="walletError">
+                            <i class="fa-solid fa-exclamation-circle"></i>
+                            <span>Invalid Solana wallet address (32-44 base58 characters)</span>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Transaction Hash (Bukti)</label>
-                        <input type="text" class="form-control" required placeholder="Contoh: 5xkt... (Solscan link)">
+                        <input type="text" id="txHash" class="form-control" required placeholder="Contoh: 5xkt... (Solscan link)">
                         <small style="color: #444; font-size: 0.75rem;">Paste link Solscan atau tx hash lengkap</small>
+                        <div class="error-message" id="txHashError">
+                            <i class="fa-solid fa-exclamation-circle"></i>
+                            <span>Must be a valid URL or base58 signature (64-88 chars)</span>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Project Token (Opsional)</label>
-                        <input type="text" class="form-control" placeholder="$TOKEN / Contract Address">
+                        <input type="text" id="projectToken" class="form-control" placeholder="$TOKEN / Contract Address">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Keterangan Singkat</label>
-                        <textarea class="form-control" rows="3" placeholder="Jelaskan pola yang ditemukan..."></textarea>
+                        <textarea id="description" class="form-control" rows="3" placeholder="Jelaskan pola yang ditemukan..." maxlength="500"></textarea>
+                        <div class="char-counter" id="charCounter">0 / 500</div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; justify-content: center;" disabled>
                         <i class="fa-solid fa-paper-plane"></i> Submit untuk Review
                     </button>
                 </form>
@@ -1314,6 +1384,7 @@
                 nav.style.background = 'rgba(10,10,10,0.98)';
                 nav.style.padding = '20px';
                 nav.style.borderBottom = '1px solid #333';
+                nav.style.zIndex = '999';
             }
         }
 
@@ -1444,19 +1515,119 @@
             }
         }
 
+        // Form Validation Functions
+        function validateSolanaAddress(address) {
+            // Solana addresses are base58 encoded, 32-44 characters
+            const base58Regex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+            return base58Regex.test(address);
+        }
+
+        function validateTxHash(hash) {
+            // Check if it's a URL starting with http
+            if (hash.startsWith('http')) {
+                return true;
+            }
+            // Otherwise check if it's a base58 signature (64-88 characters)
+            const base58Regex = /^[1-9A-HJ-NP-Za-km-z]{64,88}$/;
+            return base58Regex.test(hash);
+        }
+
+        function validateForm() {
+            const walletAddress = document.getElementById('walletAddress');
+            const txHash = document.getElementById('txHash');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            const isWalletValid = validateSolanaAddress(walletAddress.value.trim());
+            const isTxHashValid = validateTxHash(txHash.value.trim());
+            
+            // Enable/disable submit button
+            if (isWalletValid && isTxHashValid) {
+                submitBtn.disabled = false;
+                return true;
+            } else {
+                submitBtn.disabled = true;
+                return false;
+            }
+        }
+
+        // Real-time validation setup
+        document.addEventListener('DOMContentLoaded', function() {
+            const walletAddress = document.getElementById('walletAddress');
+            const txHash = document.getElementById('txHash');
+            const description = document.getElementById('description');
+            const walletError = document.getElementById('walletError');
+            const txHashError = document.getElementById('txHashError');
+            const charCounter = document.getElementById('charCounter');
+
+            if (walletAddress) {
+                walletAddress.addEventListener('input', function() {
+                    const isValid = validateSolanaAddress(this.value.trim());
+                    if (this.value.trim() === '') {
+                        walletAddress.classList.remove('error');
+                        walletError.classList.remove('show');
+                    } else if (!isValid) {
+                        walletAddress.classList.add('error');
+                        walletError.classList.add('show');
+                    } else {
+                        walletAddress.classList.remove('error');
+                        walletError.classList.remove('show');
+                    }
+                    validateForm();
+                });
+            }
+
+            if (txHash) {
+                txHash.addEventListener('input', function() {
+                    const isValid = validateTxHash(this.value.trim());
+                    if (this.value.trim() === '') {
+                        txHash.classList.remove('error');
+                        txHashError.classList.remove('show');
+                    } else if (!isValid) {
+                        txHash.classList.add('error');
+                        txHashError.classList.add('show');
+                    } else {
+                        txHash.classList.remove('error');
+                        txHashError.classList.remove('show');
+                    }
+                    validateForm();
+                });
+            }
+
+            if (description && charCounter) {
+                description.addEventListener('input', function() {
+                    const length = this.value.length;
+                    const maxLength = 500;
+                    charCounter.textContent = `${length} / ${maxLength}`;
+                    
+                    // Change color to orange when approaching limit (>400 chars)
+                    if (length > 400) {
+                        charCounter.classList.add('warning');
+                    } else {
+                        charCounter.classList.remove('warning');
+                    }
+                });
+            }
+        });
+
         // Async function to POST report data to API
         async function handleReport(e) {
             e.preventDefault();
+            
+            // Double-check validation before submission
+            if (!validateForm()) {
+                return;
+            }
+            
             const btn = e.target.querySelector('button');
             const originalHTML = btn.innerHTML;
             const form = e.target;
             
             // Get form data
             const formData = {
-                walletAddress: form.querySelector('input[placeholder="Alamat wallet yang dicurigai"]').value,
-                transactionHash: form.querySelector('input[placeholder="Contoh: 5xkt... (Solscan link)"]').value,
-                projectToken: form.querySelector('input[placeholder="$TOKEN / Contract Address"]').value,
-                description: form.querySelector('textarea').value,
+                walletAddress: form.querySelector('#walletAddress').value,
+                transactionHash: form.querySelector('#txHash').value,
+                projectToken: form.querySelector('#projectToken').value,
+                description: form.querySelector('#description').value,
                 timestamp: new Date().toISOString()
             };
             

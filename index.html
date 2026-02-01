@@ -278,12 +278,25 @@
             padding: 4px 12px; font-family: var(--font-mono); font-size: 0.75rem; 
             margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;
         }
-        /* PERUBAHAN: Warna hitam untuk On-Chain Risk Registry */
+        /* PERUBAHAN: Warna adaptif untuk On-Chain Risk Registry */
         .hero-title {
             font-size: 3.5rem; font-weight: 900; text-transform: uppercase; 
             letter-spacing: 3px; margin-bottom: 20px; line-height: 1.1;
-            color: #000000; /* Warna hitam pekat */
-            -webkit-text-fill-color: #000000; /* Override untuk browser WebKit */
+            color: #e0e0e0; /* Warna terang untuk dark mode */
+            -webkit-text-fill-color: #e0e0e0; /* Override untuk browser WebKit */
+        }
+        /* Dark color for light mode */
+        body.light-mode .hero-title {
+            color: #000000; /* Warna hitam untuk light mode */
+            -webkit-text-fill-color: #000000;
+        }
+        /* PERUBAHAN: Warna adaptif untuk Bedanya dengan Platform Lain */
+        .differentiation-title {
+            color: #e0e0e0; /* Warna terang untuk dark mode */
+        }
+        /* Dark color for light mode */
+        body.light-mode .differentiation-title {
+            color: #000000; /* Warna hitam untuk light mode */
         }
         .hero-subtitle {
             font-size: 1.1rem; color: var(--text-muted); margin-bottom: 10px;
@@ -839,8 +852,8 @@
             <div style="margin-top: 100px;">
                 <div class="feature-row">
                     <div class="feature-content">
-                        <!-- PERUBAHAN: Warna hitam untuk Bedanya dengan Platform Lain -->
-                        <h3 style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px; color: #000000;">
+                        <!-- PERUBAHAN: Warna adaptif untuk Bedanya dengan Platform Lain -->
+                        <h3 class="differentiation-title" style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px;">
                             Bedanya dengan Platform Lain?
                         </h3>
                         <p style="color: #888; margin-bottom: 20px;">

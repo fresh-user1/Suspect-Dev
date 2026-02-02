@@ -288,8 +288,8 @@
                 border: 1px solid var(--border-color);
                 background: transparent;
                 color: var(--text-main);
-                box-shadow: 4px 4px 0 0 var(--hazard-orange); /* Sharp stencil shadow */
-                transition: none; /* Hilangkan transisi */
+                box-shadow: 0 0 6px rgba(255, 69, 0, 0.2); /* Orange glow shadow */
+                transition: none; /* No transition */
             }
 
             /* Remove all hover effects - state remains the same */
@@ -299,7 +299,7 @@
                 border-color: var(--border-color);
                 color: var(--text-main);
                 transform: none;
-                box-shadow: 4px 4px 0 0 var(--hazard-orange); /* Sharp stencil shadow */
+                box-shadow: 0 0 6px rgba(255, 69, 0, 0.2); /* Keep same glow */
             }
         }
 
@@ -432,6 +432,34 @@
         body.light-mode .victims-amount {
             color: var(--text-main) !important;
             font-weight: 700;
+        }
+
+        /* 4. Segmented Bar Light Mode Overrides */
+        body.light-mode .segment {
+            background: #E5E7EB; /* Empty track - visible in light mode */
+        }
+        
+        body.light-mode .segment.filled {
+            box-shadow: 0 0 6px currentColor;
+        }
+        
+        body.light-mode .segmented-bar-value {
+            color: #111111;
+        }
+        
+        body.light-mode .wallet-address {
+            color: #374151; /* Ensure visible when unblurred */
+        }
+
+        /* 5. Stamp Overlay Visibility in Light Mode */
+        body.light-mode .scammer-wallet-card.risk-high::before,
+        body.light-mode .scammer-wallet-card.risk-medium::before {
+            opacity: 0.2;
+        }
+        
+        body.light-mode .scammer-wallet-card.risk-high:hover::before,
+        body.light-mode .scammer-wallet-card.risk-medium:hover::before {
+            opacity: 0.3;
         }
 
         .hero-subtitle {
@@ -733,6 +761,18 @@
                 padding: 16px 24px;
                 max-width: 100%;
             }
+            
+            /* Segmented Bar Mobile Responsive */
+            .segmented-bar-container {
+                width: 80px;
+            }
+            
+            /* Serial number box - keep sharp square on mobile */
+            .serial-number-box {
+                width: 48px;
+                height: 48px;
+                border-radius: 0; /* Keep sharp corners */
+            }
         }
 
         /* Animations */
@@ -818,12 +858,17 @@
         }
         
         .case-file-label {
-            color: var(--alert-red);
+            color: #dc2626; /* Always red in both modes */
             font-family: var(--font-mono);
             font-size: 9px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+        }
+        
+        /* Ensure CASE FILE NO. stays red in light mode too */
+        body.light-mode .case-file-label {
+            color: #dc2626;
         }
         
         .serial-number-box {
@@ -922,11 +967,29 @@
             height: 100%;
             transition: all 0.3s ease;
             position: relative;
+            opacity: 0;
+            transform: scaleY(0);
+            transform-origin: bottom;
+        }
+        
+        .segment.animated {
+            animation: segmentFill 0.4s ease-out forwards;
+        }
+        
+        @keyframes segmentFill {
+            to {
+                opacity: 1;
+                transform: scaleY(1);
+            }
         }
         
         .segment.filled {
             background: var(--segment-color);
-            box-shadow: 4px 4px 0 0 var(--segment-color);
+            box-shadow: 0 0 6px var(--segment-color);
+        }
+        
+        .segment.filled:hover {
+            filter: brightness(1.2);
         }
         
         .segment.filled::after {
@@ -937,6 +1000,17 @@
             right: 0;
             height: 30%;
             background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+            pointer-events: none;
+        }
+        
+        /* Pulse animation for high risk segments */
+        @keyframes segmentPulse {
+            0%, 100% { box-shadow: 0 0 6px var(--segment-color); }
+            50% { box-shadow: 0 0 12px var(--segment-color); }
+        }
+        
+        .segment.filled.pulse {
+            animation: segmentPulse 2s ease-in-out infinite;
         }
         
         .segmented-bar-score {
@@ -2024,6 +2098,55 @@
         // Initialize both toggles
         initThemeToggle('themeToggle');
         initThemeToggle('themeToggleMobile');
+
+        // Segmented Bar Animation - Dynamic Filling Based on Risk Score
+        (function() {
+            // Intersection Observer for scroll-into-view animation
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.dataset.animated) {
+                        animateSegmentedBar(entry.target);
+                        entry.target.dataset.animated = 'true';
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            function animateSegmentedBar(container) {
+                const barElement = container.querySelector('.segmented-bar');
+                const scoreElement = container.querySelector('.segmented-bar-value');
+                
+                if (!barElement || !scoreElement) return;
+                
+                const riskScore = parseInt(scoreElement.textContent);
+                const segments = barElement.querySelectorAll('.segment');
+                const totalSegments = 10;
+                
+                // Calculate how many segments should be filled (10 segments = 100%)
+                const filledSegmentCount = Math.ceil(riskScore / 10);
+                
+                // Clear any existing filled states
+                segments.forEach(seg => {
+                    seg.classList.remove('filled', 'pulse', 'animated');
+                });
+                
+                // Animate segments with staggered delay
+                for (let i = 0; i < filledSegmentCount && i < totalSegments; i++) {
+                    setTimeout(() => {
+                        segments[i].classList.add('filled', 'animated');
+                        
+                        // Add pulse animation for high risk (>90)
+                        if (riskScore > 90) {
+                            segments[i].classList.add('pulse');
+                        }
+                    }, i * 50);
+                }
+            }
+
+            // Observe all segmented bar containers
+            document.querySelectorAll('.segmented-bar-container').forEach(container => {
+                observer.observe(container);
+            });
+        })();
 
         // Helper function to get user-friendly error messages
         function getErrorMessage(status, context = 'general') {

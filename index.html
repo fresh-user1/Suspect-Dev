@@ -39,12 +39,12 @@
             --scanline-opacity: 0.3;
         }
 
-        /* Light mode theme - High-Tech Industrial / Mirror's Edge Aesthetic */
+        /* Light mode theme - Blueprint Dossier / Manila Case File Aesthetic */
         body.light-mode {
-            --bg-color: #EBEBEB; /* Light Concrete Grey */
+            --bg-color: #F4F1EA; /* Manila folder beige */
             --bg-secondary: #FFFFFF; /* Pure white for cards/surfaces */
             --bg-tertiary: #F3F4F6;
-            --text-main: #111111; /* Pitch Black for maximum contrast */
+            --text-main: #1a1a1a; /* Ink black */
             --text-muted: #555555; /* Darker muted text */
             --text-white: #ffffff;
             --gray-222: #D1D5DB;
@@ -111,6 +111,22 @@
             mix-blend-mode: multiply;
         }
 
+        /* Blueprint Grid Overlay for Light Mode */
+        .blueprint-grid {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9997;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background-image: 
+                linear-gradient(rgba(100, 149, 237, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 149, 237, 0.06) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        body.light-mode .blueprint-grid {
+            opacity: 1;
+        }
+
         .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
         .section-padding { padding: 100px 0; }
         
@@ -140,7 +156,7 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         body.light-mode header {
-            background: rgba(235, 235, 235, 0.95);
+            background: rgba(244, 241, 234, 0.95);
         }
         nav { display: flex; justify-content: space-between; align-items: center; height: 70px; gap: 20px; position: relative; }
         .logo { 
@@ -351,14 +367,14 @@
         body.light-mode .card {
             background: var(--bg-secondary);
             border-color: var(--border-secondary);
-            box-shadow: 4px 4px 0 0 var(--border-color);
+            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.08); /* Subtle drop shadow like paper on desk */
         }
 
         /* Light Mode - Scammer Wallet Cards */
         body.light-mode .scammer-wallet-card {
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             border-color: var(--border-secondary);
-            box-shadow: 4px 4px 0 0 var(--border-color);
+            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.08); /* Subtle drop shadow like paper on desk */
         }
 
         /* Light Mode - Card Text Colors */
@@ -1157,6 +1173,7 @@
     
     <div class="noise-overlay"></div>
     <div class="scanlines"></div>
+    <div class="blueprint-grid"></div>
 
     <!-- Navigation -->
     <header>

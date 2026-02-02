@@ -12,14 +12,27 @@
         :root {
             --bg-color: #0a0a0a;
             --bg-secondary: #111111;
+            --bg-tertiary: #080808;
+            --bg-pure-black: #000000;
             --text-main: #e0e0e0;
             --text-muted: #aaaaaa;
+            --text-white: #ffffff;
+            --gray-222: #222222;
+            --gray-333: #333333;
+            --gray-444: #444444;
+            --gray-555: #555555;
+            --gray-666: #666666;
+            --gray-888: #888888;
             --hazard-orange: #FF4500; /* Warna utama request */
             --hazard-dim: #cc3700;
             --cctv-green: #00ff00;
             --alert-red: #ff3333;
+            --alert-red-dark: #991b1b;
+            --status-red: #DC2626;
+            --status-orange: #D97706;
             --warning-orange: #ff8800;
             --border-color: #2a2a2a;
+            --border-secondary: #2a2a2a;
             --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
             --font-mono: 'Courier New', 'Consolas', monospace;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -30,9 +43,18 @@
         body.light-mode {
             --bg-color: #EBEBEB; /* Light Concrete Grey */
             --bg-secondary: #FFFFFF; /* Pure white for cards/surfaces */
+            --bg-tertiary: #F3F4F6;
             --text-main: #111111; /* Pitch Black for maximum contrast */
             --text-muted: #555555; /* Darker muted text */
+            --text-white: #ffffff;
+            --gray-222: #D1D5DB;
+            --gray-333: #E5E7EB;
+            --gray-444: #6B7280;
+            --gray-555: #374151;
+            --gray-666: #9ca3af;
+            --gray-888: #9ca3af;
             --border-color: #CCCCCC; /* Light grey borders */
+            --border-secondary: #E5E7EB;
             --scanline-opacity: 0.08; /* Low opacity for textured digital screen effect */
         }
 
@@ -45,7 +67,7 @@
             top: -40px;
             left: 0;
             background: var(--hazard-orange);
-            color: #fff;
+            color: var(--text-white);
             padding: 8px 16px;
             text-decoration: none;
             z-index: 10001;
@@ -177,7 +199,7 @@
             .theme-toggle:hover {
                 background: var(--hazard-orange);
                 border-color: var(--hazard-orange);
-                color: #ffffff;
+                color: var(--text-white);
                 transform: scale(1.1);
             }
         }
@@ -250,7 +272,7 @@
                 border: 1px solid var(--border-color);
                 background: transparent;
                 color: var(--text-main);
-                box-shadow: 0 0 6px rgba(255, 69, 0, 0.2); /* Shadow tipis orange */
+                box-shadow: 4px 4px 0 0 var(--hazard-orange); /* Sharp stencil shadow */
                 transition: none; /* Hilangkan transisi */
             }
 
@@ -261,7 +283,7 @@
                 border-color: var(--border-color);
                 color: var(--text-main);
                 transform: none;
-                box-shadow: 0 0 6px rgba(255, 69, 0, 0.2); /* Shadow tetap sama */
+                box-shadow: 4px 4px 0 0 var(--hazard-orange); /* Sharp stencil shadow */
             }
         }
 
@@ -298,101 +320,101 @@
             font-size: 3.5rem; font-weight: 900; text-transform: uppercase; 
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
             letter-spacing: -0.02em; margin-bottom: 20px; line-height: 1.1;
-            color: #e0e0e0; /* Light color for dark mode */
-            -webkit-text-fill-color: #e0e0e0; /* Override for WebKit browsers */
+            color: var(--text-main); /* Light color for dark mode */
+            -webkit-text-fill-color: var(--text-main); /* Override for WebKit browsers */
             text-shadow: 2px 2px 0px rgba(0,0,0,0.1); /* Inky print effect for dark mode */
         }
         /* Dark color for light mode */
         body.light-mode .hero-title {
-            color: #111111; /* Pitch Black for light mode */
-            -webkit-text-fill-color: #111111;
+            color: var(--text-main); /* Pitch Black for light mode */
+            -webkit-text-fill-color: var(--text-main);
             text-shadow: 2px 2px 0px rgba(255,69,0,0.1); /* Inky print effect for light mode */
         }
         /* CHANGE: Adaptive color for What's Different from Other Platforms */
         .differentiation-title {
-            color: #e0e0e0; /* Light color for dark mode */
+            color: var(--text-main); /* Light color for dark mode */
         }
         /* Dark color for light mode */
         body.light-mode .differentiation-title {
-            color: #111111; /* Pitch Black for light mode */
+            color: var(--text-main); /* Pitch Black for light mode */
         }
 
         /* Light Mode Overrides for Input Fields & Form Boxes */
         body.light-mode .form-control,
         body.light-mode .formula-box {
-            background: #F3F4F6;
-            color: #1F2937;
-            border-color: #D1D5DB;
+            background: var(--bg-tertiary);
+            color: var(--gray-555);
+            border-color: var(--gray-222);
         }
 
         /* Light Mode Overrides for Cards */
         body.light-mode .card {
-            background: #FFFFFF;
-            border-color: #E5E7EB;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: var(--bg-secondary);
+            border-color: var(--border-secondary);
+            box-shadow: 4px 4px 0 0 var(--border-color);
         }
 
         /* Light Mode - Scammer Wallet Cards */
         body.light-mode .scammer-wallet-card {
-            background: #F9FAFB;
-            border-color: #E5E7EB;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: var(--bg-tertiary);
+            border-color: var(--border-secondary);
+            box-shadow: 4px 4px 0 0 var(--border-color);
         }
 
         /* Light Mode - Card Text Colors */
         body.light-mode .scammer-wallet-card .wallet-address,
         body.light-mode .card p {
-            color: #374151;
+            color: var(--gray-555);
         }
 
         /* Light Mode - Threat Feed Marquee/Ticker */
         body.light-mode .threat-feed-marquee {
-            background: #374151; /* dark gray instead of black */
+            background: var(--gray-555); /* dark gray instead of black */
             border-top-color: var(--hazard-orange);
         }
 
         /* LIGHT MODE: Force Marquee Text to be White */
         body.light-mode .threat-feed-content {
-            color: #ffffff;
+            color: var(--text-white);
         }
 
         /* Light Mode - Serial Number Box Text (Keep white on red background) */
         body.light-mode .serial-number {
-            color: #ffffff;
+            color: var(--text-white);
         }
 
         /* Light Mode - Circular Gauge Background (Soft Gray instead of Black) */
         body.light-mode .circular-gauge-ring::before {
-            background: #E5E7EB; /* Soft Gray (Tailwind Gray-200) */
+            background: var(--border-secondary); /* Soft Gray (Tailwind Gray-200) */
         }
 
         /* --- LIGHT MODE SPECIFIC OVERRIDES --- */
 
         /* 1. Status Badges: Gray BG, Vibrant Text */
         body.light-mode .status-confirmed {
-            background: #F3F4F6 !important;
-            border-color: #E5E7EB !important;
-            color: #DC2626 !important; /* Keep it Red */
+            background: var(--bg-tertiary) !important;
+            border-color: var(--border-secondary) !important;
+            color: var(--status-red) !important; /* Keep it Red */
         }
 
         body.light-mode .status-suspicious {
-            background: #F3F4F6 !important;
-            border-color: #E5E7EB !important;
-            color: #D97706 !important; /* Keep it Orange */
+            background: var(--bg-tertiary) !important;
+            border-color: var(--border-secondary) !important;
+            color: var(--status-orange) !important; /* Keep it Orange */
         }
 
         /* 2. Circular Gauge: Gray Track, Black Text */
         body.light-mode .circular-gauge-score {
-            color: #111111 !important; /* Black text for visibility */
+            color: var(--text-main) !important; /* Black text for visibility */
         }
 
         body.light-mode .circular-gauge-max {
-            color: #6B7280 !important;
+            color: var(--gray-444) !important;
         }
 
         /* 3. Victims Amount Visibility */
         body.light-mode .victims-amount {
-            color: #111111 !important;
+            color: var(--text-main) !important;
             font-weight: 700;
         }
 
@@ -415,7 +437,7 @@
             50%, 100% { opacity: 0; }
         }
         .hero-disclaimer {
-            font-size: 0.8rem; color: #666; font-family: var(--font-mono);
+            font-size: 0.8rem; color: var(--gray-666); font-family: var(--font-mono);
             margin-bottom: 40px; font-style: italic;
         }
 
@@ -427,8 +449,8 @@
             font-size: 0.85rem; letter-spacing: 1px;
         }
         .btn-primary { 
-            background-color: var(--hazard-orange); color: #fff; 
-            box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+            background-color: var(--hazard-orange); color: var(--text-white); 
+            box-shadow: 4px 4px 0 0 var(--hazard-dim);
             position: relative;
             overflow: hidden;
         }
@@ -484,7 +506,7 @@
         .card:hover { 
             border-color: var(--hazard-orange); 
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.1);
+            box-shadow: 4px 4px 0 0 var(--hazard-orange);
         }
         .card-icon {
             font-size: 2rem; color: var(--hazard-orange); margin-bottom: 15px;
@@ -514,16 +536,16 @@
             list-style: none; margin-top: 20px;
         }
         .feature-list li {
-            padding: 10px 0; border-bottom: 1px solid #222;
+            padding: 10px 0; border-bottom: 1px solid var(--gray-222);
             display: flex; align-items: center; gap: 10px;
-            font-size: 0.9rem; color: #aaa;
+            font-size: 0.9rem; color: var(--text-muted);
         }
         .feature-list li::before {
             content: '>'; color: var(--hazard-orange); font-weight: bold;
         }
 
         /* Point System Section */
-        #point-system { background: var(--bg-secondary); border-top: 1px solid #222; border-bottom: 1px solid #222; }
+        #point-system { background: var(--bg-secondary); border-top: 1px solid var(--gray-222); border-bottom: 1px solid var(--gray-222); }
         .point-flow {
             display: flex; justify-content: space-between; align-items: center;
             max-width: 900px; margin: 50px auto; position: relative;
@@ -538,7 +560,7 @@
             font-size: 1.2rem; background: var(--bg-color);
         }
         .point-step h4 { font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
-        .point-step p { font-size: 0.8rem; color: #666; padding: 0 10px; }
+        .point-step p { font-size: 0.8rem; color: var(--gray-666); padding: 0 10px; }
         
         .connector {
             position: absolute; top: 30px; left: 20%; right: 20%; height: 2px;
@@ -547,7 +569,7 @@
         }
 
         .formula-box {
-            background: #000; border: 1px solid var(--border-color);
+            background: var(--bg-pure-black); border: 1px solid var(--border-color);
             padding: 30px; text-align: center; margin-top: 40px;
             font-family: var(--font-mono);
         }
@@ -568,13 +590,13 @@
             letter-spacing: 0.1em;
         }
         .form-control {
-            width: 100%; background: #080808; border: 1px solid #333;
-            color: #fff; padding: 14px; font-family: var(--font-mono);
+            width: 100%; background: var(--bg-tertiary); border: 1px solid var(--gray-333);
+            color: var(--text-white); padding: 14px; font-family: var(--font-mono);
             font-size: 0.9rem; transition: var(--transition);
         }
         .form-control:focus { 
             outline: none; border-color: var(--hazard-orange); 
-            box-shadow: 0 0 10px rgba(255,69,0,0.1);
+            box-shadow: 4px 4px 0 0 var(--hazard-orange);
         }
         .form-control.error {
             border-color: var(--alert-red);
@@ -603,16 +625,16 @@
 
         /* Footer */
         footer { 
-            background: #050505; padding: 60px 0 30px; 
+            background: var(--bg-tertiary); padding: 60px 0 30px; 
             border-top: 1px solid var(--border-color); text-align: center;
         }
         .footer-links { margin: 20px 0; }
         .footer-links a { 
-            color: #555; margin: 0 15px; font-size: 1.2rem; transition: var(--transition);
+            color: var(--gray-555); margin: 0 15px; font-size: 1.2rem; transition: var(--transition);
         }
         .footer-links a:hover { color: var(--hazard-orange); }
         .disclaimer {
-            font-size: 0.7rem; color: #444; font-family: var(--font-mono);
+            font-size: 0.7rem; color: var(--gray-444); font-family: var(--font-mono);
             max-width: 600px; margin: 30px auto 0; line-height: 1.6;
         }
 
@@ -622,7 +644,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #000000;
+            background: var(--bg-pure-black);
             border-top: 2px solid var(--hazard-orange);
             z-index: 9999;
             overflow: hidden;
@@ -705,7 +727,7 @@
         .scammer-wallet-card {
             position: relative;
             background: var(--bg-secondary);
-            border: 1px solid #2a2a2a;
+            border: 1px solid var(--border-secondary);
             border-radius: 0; /* Sharp corners */
             border-left: 3px solid var(--hazard-orange);
             background-image: 
@@ -716,8 +738,8 @@
             transition: all 0.3s ease;
         }
         .scammer-wallet-card:hover {
-            border-color: #ef4444;
-            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+            border-color: var(--alert-red);
+            box-shadow: 4px 4px 0 0 var(--alert-red);
             transform: translateY(-2px);
         }
         
@@ -780,7 +802,7 @@
         }
         
         .case-file-label {
-            color: #dc2626;
+            color: var(--alert-red);
             font-family: var(--font-mono);
             font-size: 9px;
             font-weight: bold;
@@ -792,14 +814,14 @@
             flex-shrink: 0;
             width: 48px;
             height: 48px;
-            background: linear-gradient(to bottom right, #dc2626, #991b1b);
+            background: linear-gradient(to bottom right, var(--alert-red), var(--alert-red-dark));
             border-radius: 0; /* Sharp corners */
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .serial-number {
-            color: #ffffff;
+            color: var(--text-white);
             font-family: var(--font-mono);
             font-weight: bold;
             font-size: 18px;
@@ -828,7 +850,7 @@
             letter-spacing: 0.1em;
         }
         .wallet-address {
-            color: #ffffff;
+            color: var(--text-white);
             font-family: var(--font-mono);
             font-size: 14px;
             overflow: hidden;
@@ -880,7 +902,7 @@
         
         .segment {
             flex: 1;
-            background: #1f2937;
+            background: var(--gray-555);
             height: 100%;
             transition: all 0.3s ease;
             position: relative;
@@ -888,7 +910,7 @@
         
         .segment.filled {
             background: var(--segment-color);
-            box-shadow: 0 0 8px var(--segment-color);
+            box-shadow: 4px 4px 0 0 var(--segment-color);
         }
         
         .segment.filled::after {
@@ -910,13 +932,13 @@
             font-family: var(--font-mono);
             font-size: 20px;
             font-weight: bold;
-            color: #ffffff;
+            color: var(--text-white);
         }
         
         .segmented-bar-label {
             font-family: var(--font-mono);
             font-size: 10px;
-            color: #9ca3af;
+            color: var(--gray-666);
         }
         
         /* Color variants for segmented bar */
@@ -967,7 +989,7 @@
             position: absolute;
             inset: 0;
             border-radius: 50%;
-            background: #1f2937;
+            background: var(--gray-555);
         }
         /* Colored progress ring using conic-gradient */
         .circular-gauge-ring::after {
@@ -1004,12 +1026,12 @@
             font-size: 20px;
             font-weight: bold;
             line-height: 1;
-            color: #ffffff;
+            color: var(--text-white);
         }
         .circular-gauge-max {
             font-family: var(--font-mono);
             font-size: 10px;
-            color: #9ca3af;
+            color: var(--gray-666);
             margin-top: 2px;
         }
         
@@ -1027,11 +1049,11 @@
         /* Pulsing animation for high risk (>90) */
         @keyframes pulse-ring {
             0%, 100% {
-                box-shadow: 0 0 0 0 var(--gauge-color);
+                box-shadow: 4px 4px 0 0 var(--gauge-color);
                 filter: brightness(1);
             }
             50% {
-                box-shadow: 0 0 20px 5px var(--gauge-color);
+                box-shadow: 6px 6px 0 0 var(--gauge-color);
                 filter: brightness(1.2);
             }
         }
@@ -1050,17 +1072,17 @@
             gap: 8px;
         }
         .victims-icon {
-            color: #f87171;
+            color: var(--alert-red);
             font-size: 11px;
         }
         .victims-label {
-            color: #9ca3af;
+            color: var(--gray-666);
             font-size: 11px;
             font-family: var(--font-mono);
             text-transform: uppercase;
         }
         .victims-amount {
-            color: #ffffff;
+            color: var(--text-white);
             font-family: var(--font-mono);
             font-size: 14px;
             font-weight: 600;
@@ -1077,12 +1099,12 @@
         /* Terminal-style loading log */
         .terminal-log {
             font-family: var(--font-mono);
-            color: #00ff00;
+            color: var(--cctv-green);
             font-size: 0.85rem;
             line-height: 1.8;
             padding: 15px;
-            background: #000;
-            border: 1px solid #00ff00;
+            background: var(--bg-pure-black);
+            border: 1px solid var(--cctv-green);
             border-radius: 4px;
             min-height: 120px;
             display: flex;
@@ -1106,7 +1128,7 @@
             display: inline-block;
             width: 8px;
             height: 14px;
-            background: #00ff00;
+            background: var(--cctv-green);
             margin-left: 4px;
             animation: blink 1s infinite;
         }
@@ -1228,7 +1250,7 @@
                         <h3 class="differentiation-title" style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 20px;">
                             What's Different from Other Platforms?
                         </h3>
-                        <p style="color: #888; margin-bottom: 20px;">
+                        <p style="color: var(--gray-888); margin-bottom: 20px;">
                             Many scanners focus on token contracts (honeypot, mint authority). We focus on <strong>actor behavior</strong> — historical patterns of the same developer wallet recurring across different projects.
                         </p>
                         <ul class="feature-list">
@@ -1609,11 +1631,11 @@
             </div>
 
             <div class="formula-box">
-                <div style="margin-bottom: 20px; color: #666; font-size: 0.8rem;">ALLOCATION FORMULA (INITIAL CONCEPT)</div>
+                <div style="margin-bottom: 20px; color: var(--gray-666); font-size: 0.8rem;">ALLOCATION FORMULA (INITIAL CONCEPT)</div>
                 <div class="formula">
                     (Total Contribution Points × Weight) + (Avg Token Hold × Duration) = Allocation Score
                 </div>
-                <p style="color: #444; font-size: 0.8rem; margin-top: 10px;">
+                <p style="color: var(--gray-444); font-size: 0.8rem; margin-top: 10px;">
                     *Mathematical details and smart contract distribution are still under development. No specific monetary value promised.
                 </p>
             </div>
@@ -1623,7 +1645,7 @@
                     <h3 style="color: var(--hazard-orange); margin-bottom: 15px;">
                         <i class="fa-solid fa-upload"></i> How to Submit
                     </h3>
-                    <p style="font-size: 0.85rem; line-height: 1.8; color: #aaa;">
+                    <p style="font-size: 0.85rem; line-height: 1.8; color: var(--text-muted);">
                         1. Find liquidity withdrawal tx hash (liquidity removal)<br>
                         2. Copy developer wallet address<br>
                         3. Fill out form with evidence link (Solscan)<br>
@@ -1635,7 +1657,7 @@
                     <h3 style="color: var(--cctv-green); margin-bottom: 15px;">
                         <i class="fa-solid fa-shield-halved"></i> Anti-Gaming
                     </h3>
-                    <p style="font-size: 0.85rem; line-height: 1.8; color: #aaa;">
+                    <p style="font-size: 0.85rem; line-height: 1.8; color: var(--text-muted);">
                         - Minimum 7-day token holding for airdrop eligibility<br>
                         - Sybil resistance via on-chain activity check<br>
                         - False reports will reduce reputation (not points)<br>
@@ -1662,7 +1684,7 @@
                 <button onclick="debouncedCheckWallet()" class="btn btn-primary" style="width: 100%; justify-content: center;" aria-label="Scan database for wallet risk">
                     <i class="fa-solid fa-search"></i> Scan Database
                 </button>
-                <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid #333; display: none; font-family: var(--font-mono); font-size: 0.85rem;">
+                <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid var(--gray-333); display: none; font-family: var(--font-mono); font-size: 0.85rem;">
                     <!-- Result will appear here -->
                 </div>
             </div>
@@ -1691,7 +1713,7 @@
                     <div class="form-group">
                         <label for="txHash" class="form-label">Transaction Hash (Evidence)</label>
                         <input type="text" id="txHash" class="form-control" required placeholder="Example: 5xkt... (Solscan link)" aria-required="true" aria-describedby="txHashHelp txHashError">
-                        <small id="txHashHelp" style="color: #444; font-size: 0.75rem;">Paste Solscan link or full tx hash</small>
+                        <small id="txHashHelp" style="color: var(--gray-444); font-size: 0.75rem;">Paste Solscan link or full tx hash</small>
                         <div class="error-message" id="txHashError">
                             <i class="fa-solid fa-exclamation-circle"></i>
                             <span>Must be a valid URL or base58 signature (64-88 chars)</span>
@@ -2058,7 +2080,10 @@
             }
 
             resultDiv.style.display = 'block';
-            resultDiv.style.borderColor = '#00ff00';
+            
+            // Get CSS variable values from computed style
+            const rootStyles = getComputedStyle(document.documentElement);
+            resultDiv.style.borderColor = rootStyles.getPropertyValue('--cctv-green').trim();
 
             const terminalMessages = [
                 'Connecting to Solana RPC...',
@@ -2073,9 +2098,9 @@
                 const data = await fetchWalletData(input);
                 
                 if (data.riskScore >= 70) {
-                    resultDiv.style.borderColor = '#ff3333';
+                    resultDiv.style.borderColor = rootStyles.getPropertyValue('--alert-red').trim();
                     resultDiv.innerHTML = `
-                        <div style="color: #ff3333; font-weight: bold; margin-bottom: 15px; font-family: var(--font-mono);">
+                        <div style="color: var(--alert-red); font-weight: bold; margin-bottom: 15px; font-family: var(--font-mono);">
                             <i class="fa-solid fa-triangle-exclamation"></i> HIGH RISK DETECTED
                         </div>
                         <div style="font-family: var(--font-mono); line-height: 1.8;">
@@ -2083,15 +2108,15 @@
                             <div><strong>Balance:</strong> ${data.balance}</div>
                             <div><strong>Transactions:</strong> ${data.transactionCount}</div>
                             <div><strong>First Seen:</strong> ${data.firstSeen}</div>
-                            <div><strong>Risk Score:</strong> <span style="color: #ff3333;">${data.riskScore}/100</span></div>
-                            <div><strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: #ff3333; padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; margin-right: 5px;">${tag}</span>`).join('')}</div>
+                            <div><strong>Risk Score:</strong> <span style="color: var(--alert-red);">${data.riskScore}/100</span></div>
+                            <div><strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: var(--alert-red); padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; margin-right: 5px;">${tag}</span>`).join('')}</div>
                         </div>
                     `;
                     showNotification('High risk wallet detected!', 'error');
                 } else {
-                    resultDiv.style.borderColor = '#00ff00';
+                    resultDiv.style.borderColor = rootStyles.getPropertyValue('--cctv-green').trim();
                     resultDiv.innerHTML = `
-                        <div style="color: #00ff00; margin-bottom: 15px; font-family: var(--font-mono);">
+                        <div style="color: var(--cctv-green); margin-bottom: 15px; font-family: var(--font-mono);">
                             <i class="fa-solid fa-check-circle"></i> LOW RISK
                         </div>
                         <div style="font-family: var(--font-mono); line-height: 1.8;">
@@ -2099,9 +2124,9 @@
                             <div><strong>Balance:</strong> ${data.balance}</div>
                             <div><strong>Transactions:</strong> ${data.transactionCount}</div>
                             <div><strong>First Seen:</strong> ${data.firstSeen}</div>
-                            <div><strong>Risk Score:</strong> <span style="color: #00ff00;">${data.riskScore}/100</span></div>
-                            <div><strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: #666; padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; margin-right: 5px;">${tag}</span>`).join('')}</div>
-                            <div style="color: #666; margin-top: 10px; font-size: 0.8rem;">
+                            <div><strong>Risk Score:</strong> <span style="color: var(--cctv-green);">${data.riskScore}/100</span></div>
+                            <div><strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: var(--gray-666); padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; margin-right: 5px;">${tag}</span>`).join('')}</div>
+                            <div style="color: var(--gray-666); margin-top: 10px; font-size: 0.8rem;">
                                 *Low risk score does not guarantee safety. Always DYOR.
                             </div>
                         </div>
@@ -2110,13 +2135,13 @@
                 }
             } catch (error) {
                 console.error('Error checking wallet:', error);
-                resultDiv.style.borderColor = '#ff9800';
+                resultDiv.style.borderColor = rootStyles.getPropertyValue('--warning-orange').trim();
                 resultDiv.innerHTML = `
-                    <div style="color: #ff9800; font-weight: bold; margin-bottom: 10px; font-family: var(--font-mono);">
+                    <div style="color: var(--warning-orange); font-weight: bold; margin-bottom: 10px; font-family: var(--font-mono);">
                         <i class="fa-solid fa-exclamation-circle"></i> ERROR
                     </div>
                     <div style="font-family: var(--font-mono);">${error.message}</div>
-                    <div style="color: #666; margin-top: 10px; font-size: 0.8rem; font-family: var(--font-mono);">
+                    <div style="color: var(--gray-666); margin-top: 10px; font-size: 0.8rem; font-family: var(--font-mono);">
                         Please ensure the address is at least 32 characters long.
                     </div>
                 `;
@@ -2282,10 +2307,12 @@
                 existingNotif.remove();
             }
 
+            // Get CSS variable values from computed style
+            const rootStyles = getComputedStyle(document.documentElement);
             const colorMap = {
-                'success': { bg: '#00ff00', text: '#0a0a0a' },
-                'error': { bg: '#ff3333', text: '#fff' },
-                'info': { bg: '#ff9800', text: '#fff' }
+                'success': { bg: rootStyles.getPropertyValue('--cctv-green').trim(), text: rootStyles.getPropertyValue('--bg-color').trim() },
+                'error': { bg: rootStyles.getPropertyValue('--alert-red').trim(), text: rootStyles.getPropertyValue('--text-white').trim() },
+                'info': { bg: rootStyles.getPropertyValue('--warning-orange').trim(), text: rootStyles.getPropertyValue('--text-white').trim() }
             };
             
             const colors = colorMap[type] || colorMap.info;
@@ -2300,7 +2327,7 @@
                 background: ${colors.bg};
                 color: ${colors.text};
                 border-radius: 4px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                box-shadow: 4px 4px 0 0 rgba(0,0,0,0.3);
                 z-index: 10000;
                 font-family: var(--font-main);
                 font-size: 0.9rem;

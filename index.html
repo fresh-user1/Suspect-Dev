@@ -2117,12 +2117,13 @@
                 
                 if (!barElement || !scoreElement) return;
                 
-                const riskScore = parseInt(scoreElement.textContent);
+                const riskScore = parseInt(scoreElement.textContent, 10);
                 const segments = barElement.querySelectorAll('.segment');
                 const totalSegments = 10;
                 
                 // Calculate how many segments should be filled (10 segments = 100%)
-                const filledSegmentCount = Math.ceil(riskScore / 10);
+                // Using Math.round for cleaner discrete segments (0-10 = 1, 11-20 = 2, etc.)
+                const filledSegmentCount = Math.round(riskScore / 10);
                 
                 // Clear any existing filled states
                 segments.forEach(seg => {

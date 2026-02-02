@@ -2455,6 +2455,11 @@
 
         // Segmented Bar Dynamic Filling with Scroll Animation
         function animateSegmentedBars() {
+            // Constants for better maintainability
+            const HIGH_RISK_THRESHOLD = 90;
+            const SEGMENT_ANIMATION_DELAY_MS = 50;
+            const TOTAL_SEGMENTS = 10;
+            
             const barContainers = document.querySelectorAll('.segmented-bar-container');
             
             const observer = new IntersectionObserver((entries) => {
@@ -2465,10 +2470,11 @@
                         const container = entry.target;
                         const scoreValue = parseInt(container.querySelector('.segmented-bar-value')?.textContent || '0', 10);
                         const segments = container.querySelectorAll('.segment');
-                        const isHighRisk = scoreValue > 90;
+                        const isHighRisk = scoreValue > HIGH_RISK_THRESHOLD;
                         
                         // Calculate how many segments should be filled (each segment = 10%)
-                        const filledCount = Math.round(scoreValue / 10);
+                        // Using Math.min to ensure we never exceed total segments
+                        const filledCount = Math.min(Math.ceil(scoreValue / 10), TOTAL_SEGMENTS);
                         
                         // Animate segments with staggered delay
                         segments.forEach((segment, index) => {
@@ -2479,7 +2485,7 @@
                                     if (isHighRisk) {
                                         segment.classList.add('high-risk');
                                     }
-                                }, index * 50); // 50ms delay between each segment
+                                }, index * SEGMENT_ANIMATION_DELAY_MS);
                             }
                         });
                     }

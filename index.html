@@ -97,6 +97,17 @@
         .text-muted { color: var(--text-muted); }
         .font-mono { font-family: var(--font-mono); }
         
+        /* h3 heading styles */
+        h3 {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1); /* Inky print effect for dark mode */
+        }
+        body.light-mode h3 {
+            text-shadow: 2px 2px 0px rgba(255,69,0,0.1); /* Inky print effect for light mode */
+        }
+        
         /* Header */
         header {
             position: fixed; top: 0; width: 100%;
@@ -285,14 +296,17 @@
         /* CHANGE: Adaptive color for On-Chain Risk Registry */
         .hero-title {
             font-size: 3.5rem; font-weight: 900; text-transform: uppercase; 
-            letter-spacing: 3px; margin-bottom: 20px; line-height: 1.1;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            letter-spacing: -0.02em; margin-bottom: 20px; line-height: 1.1;
             color: #e0e0e0; /* Light color for dark mode */
             -webkit-text-fill-color: #e0e0e0; /* Override for WebKit browsers */
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1); /* Inky print effect for dark mode */
         }
         /* Dark color for light mode */
         body.light-mode .hero-title {
             color: #111111; /* Pitch Black for light mode */
             -webkit-text-fill-color: #111111;
+            text-shadow: 2px 2px 0px rgba(255,69,0,0.1); /* Inky print effect for light mode */
         }
         /* CHANGE: Adaptive color for What's Different from Other Platforms */
         .differentiation-title {
@@ -389,7 +403,7 @@
         }
         .typing-cursor {
             display: inline-block;
-            width: 2px;
+            width: 10px; /* BLOCK style cursor */
             height: 1em;
             background-color: var(--hazard-orange);
             margin-left: 2px;
@@ -442,8 +456,15 @@
         /* Section Styling */
         .section-title {
             font-size: 2rem; text-transform: uppercase; margin-bottom: 20px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            letter-spacing: -0.02em;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1); /* Inky print effect for dark mode */
             border-left: 4px solid var(--hazard-orange); padding-left: 20px;
             display: inline-block;
+        }
+        /* Light mode inky print effect for section-title */
+        body.light-mode .section-title {
+            text-shadow: 2px 2px 0px rgba(255,69,0,0.1);
         }
         .section-header {
             text-align: center; margin-bottom: 60px;
@@ -542,8 +563,9 @@
         }
         .form-group { margin-bottom: 25px; }
         .form-label {
-            display: block; margin-bottom: 8px; font-family: var(--font-mono);
-            font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;
+            display: block; margin-bottom: 8px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
         .form-control {
             width: 100%; background: #080808; border: 1px solid #333;
@@ -729,12 +751,12 @@
             min-width: 0;
         }
         .wallet-label {
-            color: #9ca3af;
-            font-size: 11px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
             margin-bottom: 4px;
-            font-family: var(--font-mono);
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.1em;
         }
         .wallet-address {
             color: #ffffff;

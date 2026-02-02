@@ -24,6 +24,19 @@
             --font-mono: 'Courier New', 'Consolas', monospace;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --scanline-opacity: 0.3;
+            
+            /* Semantic background variables */
+            --section-bg-primary: var(--bg-color);
+            --section-bg-secondary: var(--bg-secondary);
+            
+            /* Hero gradient for dark mode */
+            --hero-gradient: radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.15) 0%, transparent 70%);
+            
+            /* Grid texture for sections */
+            --grid-texture: url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 0 L 20 0 L 20 20 L 0 20 Z' fill='none' stroke='%232a2a2a' stroke-width='0.5' opacity='0.02'/%3E%3C/svg%3E");
+            
+            /* Footer darker background */
+            --footer-bg: #050505;
         }
 
         /* Light mode theme - High-Tech Industrial / Mirror's Edge Aesthetic */
@@ -34,6 +47,19 @@
             --text-muted: #555555; /* Darker muted text */
             --border-color: #CCCCCC; /* Light grey borders */
             --scanline-opacity: 0.08; /* Low opacity for textured digital screen effect */
+            
+            /* Semantic background variables for light mode */
+            --section-bg-primary: var(--bg-color);
+            --section-bg-secondary: var(--bg-secondary);
+            
+            /* Hero gradient for light mode - subtler */
+            --hero-gradient: radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.08) 0%, transparent 60%);
+            
+            /* Grid texture for light mode */
+            --grid-texture: url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 0 L 20 0 L 20 20 L 0 20 Z' fill='none' stroke='%23CCCCCC' stroke-width='0.5' opacity='0.02'/%3E%3C/svg%3E");
+            
+            /* Footer darker background for light mode */
+            --footer-bg: #DFDFDF;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -258,7 +284,7 @@
         #hero {
             min-height: 100vh; display: flex; align-items: center; justify-content: center;
             padding-top: 70px; position: relative;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.1) 0%, rgba(0,0,0,0) 70%);
+            background: var(--hero-gradient);
             overflow: hidden;
         }
         #hero-canvas {
@@ -401,7 +427,7 @@
             50%, 100% { opacity: 0; }
         }
         .hero-disclaimer {
-            font-size: 0.8rem; color: #666; font-family: var(--font-mono);
+            font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);
             margin-bottom: 40px; font-style: italic;
         }
 
@@ -493,7 +519,7 @@
             list-style: none; margin-top: 20px;
         }
         .feature-list li {
-            padding: 10px 0; border-bottom: 1px solid #222;
+            padding: 10px 0; border-bottom: 1px solid var(--border-color);
             display: flex; align-items: center; gap: 10px;
             font-size: 0.9rem; color: #aaa;
         }
@@ -502,7 +528,11 @@
         }
 
         /* Point System Section */
-        #point-system { background: var(--bg-secondary); border-top: 1px solid #222; border-bottom: 1px solid #222; }
+        #point-system { 
+            background: var(--section-bg-primary); 
+            border-top: 1px solid var(--border-color); 
+            border-bottom: 1px solid var(--border-color); 
+        }
         .point-flow {
             display: flex; justify-content: space-between; align-items: center;
             max-width: 900px; margin: 50px auto; position: relative;
@@ -517,7 +547,7 @@
             font-size: 1.2rem; background: var(--bg-color);
         }
         .point-step h4 { font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
-        .point-step p { font-size: 0.8rem; color: #666; padding: 0 10px; }
+        .point-step p { font-size: 0.8rem; color: var(--text-muted); padding: 0 10px; }
         
         .connector {
             position: absolute; top: 30px; left: 20%; right: 20%; height: 2px;
@@ -526,13 +556,58 @@
         }
 
         .formula-box {
-            background: #000; border: 1px solid var(--border-color);
+            background: var(--bg-color); border: 1px solid var(--border-color);
             padding: 30px; text-align: center; margin-top: 40px;
             font-family: var(--font-mono);
         }
         .formula {
             font-size: 1.2rem; color: var(--hazard-orange); margin-bottom: 10px;
             letter-spacing: 2px;
+        }
+
+        /* Section Background Classes */
+        .section-bg-primary {
+            background: var(--section-bg-primary);
+        }
+
+        .section-bg-secondary {
+            background: var(--section-bg-secondary);
+            background-image: var(--grid-texture);
+            box-shadow: 0 -1px 0 var(--border-color), 0 1px 0 var(--border-color);
+        }
+
+        /* Hazard Stripe Dividers */
+        .hazard-divider {
+            height: 4px;
+            width: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--hazard-orange),
+                var(--hazard-orange) 10px,
+                var(--bg-color) 10px,
+                var(--bg-color) 20px
+            );
+        }
+
+        /* Light mode - reduce hazard stripe opacity */
+        body.light-mode .hazard-divider {
+            opacity: 0.6;
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            .section-padding { 
+                padding: 60px 0; 
+            }
+            
+            /* Reduce hero gradient intensity on mobile */
+            #hero {
+                background: radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.1) 0%, transparent 70%);
+            }
+            
+            body.light-mode #hero {
+                background: radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.05) 0%, transparent 60%);
+            }
         }
 
         /* Report Form */
@@ -546,7 +621,7 @@
             font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;
         }
         .form-control {
-            width: 100%; background: #080808; border: 1px solid #333;
+            width: 100%; background: var(--bg-color); border: 1px solid var(--border-color);
             color: #fff; padding: 14px; font-family: var(--font-mono);
             font-size: 0.9rem; transition: var(--transition);
         }
@@ -581,8 +656,10 @@
 
         /* Footer */
         footer { 
-            background: #050505; padding: 60px 0 30px; 
-            border-top: 1px solid var(--border-color); text-align: center;
+            background: var(--footer-bg); 
+            padding: 60px 0 30px; 
+            border-top: 1px solid var(--border-color); 
+            text-align: center;
         }
         .footer-links { margin: 20px 0; }
         .footer-links a { 
@@ -600,7 +677,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #000000;
+            background: var(--bg-color);
             border-top: 2px solid var(--hazard-orange);
             z-index: 9999;
             overflow: hidden;
@@ -917,7 +994,7 @@
             font-size: 0.85rem;
             line-height: 1.8;
             padding: 15px;
-            background: #000;
+            background: var(--bg-color);
             border: 1px solid #00ff00;
             border-radius: 4px;
             min-height: 120px;
@@ -1029,7 +1106,7 @@
     <main id="main-content">
     
     <!-- About Section: What is this & Advantages -->
-    <section id="about" class="section-padding">
+    <section id="about" class="section-padding section-bg-primary">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title" style="border: none; display: inline-block;">What Is This?</h2>
@@ -1082,8 +1159,11 @@
         </div>
     </section>
 
+    <!-- Hazard Stripe Divider -->
+    <div class="hazard-divider"></div>
+
     <!-- Latest Scammer Wallets Section -->
-    <section id="scammer-wallets" class="section-padding" style="background: var(--bg-color);">
+    <section id="scammer-wallets" class="section-padding section-bg-secondary">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Latest Scammer Wallets</h2>
@@ -1418,7 +1498,7 @@
     </section>
 
     <!-- Simple Check Wallet Section -->
-    <section id="check" class="section-padding" style="background: var(--bg-secondary);">
+    <section id="check" class="section-padding section-bg-secondary">
         <div class="container" style="max-width: 600px;">
             <div class="section-header">
                 <h2 class="section-title" style="border: none; display: inline-block;">Check Wallet</h2>
@@ -1433,15 +1513,18 @@
                 <button onclick="debouncedCheckWallet()" class="btn btn-primary" style="width: 100%; justify-content: center;" aria-label="Scan database for wallet risk">
                     <i class="fa-solid fa-search"></i> Scan Database
                 </button>
-                <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid #333; display: none; font-family: var(--font-mono); font-size: 0.85rem;">
+                <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid var(--border-color); display: none; font-family: var(--font-mono); font-size: 0.85rem;">
                     <!-- Result will appear here -->
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Hazard Stripe Divider -->
+    <div class="hazard-divider"></div>
+
     <!-- Report Section -->
-    <section id="report" class="section-padding">
+    <section id="report" class="section-padding section-bg-primary">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Submit Evidence</h2>

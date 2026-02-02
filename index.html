@@ -2422,8 +2422,17 @@
                 const originalPlaceholder = input.getAttribute('placeholder');
                 if (!originalPlaceholder) return;
                 
-                let typingInterval;
+                let typingInterval = null;
                 let hasTyped = false;
+                
+                // Helper function to clear typing animation
+                const clearTypingAnimation = () => {
+                    if (typingInterval) {
+                        clearInterval(typingInterval);
+                        typingInterval = null;
+                        input.setAttribute('placeholder', originalPlaceholder);
+                    }
+                };
                 
                 input.addEventListener('focus', function() {
                     // Only animate placeholder on first focus
@@ -2438,26 +2447,17 @@
                                 charIndex++;
                             } else {
                                 clearInterval(typingInterval);
+                                typingInterval = null;
                             }
                         }, 50); // Type one character every 50ms
                     }
                 });
                 
                 // Clear typing interval if user starts typing during animation
-                input.addEventListener('input', function() {
-                    if (typingInterval) {
-                        clearInterval(typingInterval);
-                        input.setAttribute('placeholder', originalPlaceholder);
-                    }
-                });
+                input.addEventListener('input', clearTypingAnimation);
                 
                 // Clear typing interval if user blurs before animation completes
-                input.addEventListener('blur', function() {
-                    if (typingInterval) {
-                        clearInterval(typingInterval);
-                        input.setAttribute('placeholder', originalPlaceholder);
-                    }
-                });
+                input.addEventListener('blur', clearTypingAnimation);
             });
         });
     </script>

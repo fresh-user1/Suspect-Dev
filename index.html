@@ -27,6 +27,9 @@
             --hazard-dim: #cc3700;
             --cctv-green: #00ff00;
             --alert-red: #ff3333;
+            --alert-red-dark: #991b1b;
+            --status-red: #DC2626;
+            --status-orange: #D97706;
             --warning-orange: #ff8800;
             --border-color: #2a2a2a;
             --border-secondary: #2a2a2a;
@@ -391,13 +394,13 @@
         body.light-mode .status-confirmed {
             background: var(--bg-tertiary) !important;
             border-color: var(--border-secondary) !important;
-            color: #DC2626 !important; /* Keep it Red */
+            color: var(--status-red) !important; /* Keep it Red */
         }
 
         body.light-mode .status-suspicious {
             background: var(--bg-tertiary) !important;
             border-color: var(--border-secondary) !important;
-            color: #D97706 !important; /* Keep it Orange */
+            color: var(--status-orange) !important; /* Keep it Orange */
         }
 
         /* 2. Circular Gauge: Gray Track, Black Text */
@@ -811,7 +814,7 @@
             flex-shrink: 0;
             width: 48px;
             height: 48px;
-            background: linear-gradient(to bottom right, var(--alert-red), #991b1b);
+            background: linear-gradient(to bottom right, var(--alert-red), var(--alert-red-dark));
             border-radius: 0; /* Sharp corners */
             display: flex;
             align-items: center;
@@ -2077,7 +2080,10 @@
             }
 
             resultDiv.style.display = 'block';
-            resultDiv.style.borderColor = 'var(--cctv-green)';
+            
+            // Get CSS variable values from computed style
+            const rootStyles = getComputedStyle(document.documentElement);
+            resultDiv.style.borderColor = rootStyles.getPropertyValue('--cctv-green').trim();
 
             const terminalMessages = [
                 'Connecting to Solana RPC...',
@@ -2092,7 +2098,7 @@
                 const data = await fetchWalletData(input);
                 
                 if (data.riskScore >= 70) {
-                    resultDiv.style.borderColor = 'var(--alert-red)';
+                    resultDiv.style.borderColor = rootStyles.getPropertyValue('--alert-red').trim();
                     resultDiv.innerHTML = `
                         <div style="color: var(--alert-red); font-weight: bold; margin-bottom: 15px; font-family: var(--font-mono);">
                             <i class="fa-solid fa-triangle-exclamation"></i> HIGH RISK DETECTED
@@ -2108,7 +2114,7 @@
                     `;
                     showNotification('High risk wallet detected!', 'error');
                 } else {
-                    resultDiv.style.borderColor = 'var(--cctv-green)';
+                    resultDiv.style.borderColor = rootStyles.getPropertyValue('--cctv-green').trim();
                     resultDiv.innerHTML = `
                         <div style="color: var(--cctv-green); margin-bottom: 15px; font-family: var(--font-mono);">
                             <i class="fa-solid fa-check-circle"></i> LOW RISK
@@ -2129,7 +2135,7 @@
                 }
             } catch (error) {
                 console.error('Error checking wallet:', error);
-                resultDiv.style.borderColor = 'var(--warning-orange)';
+                resultDiv.style.borderColor = rootStyles.getPropertyValue('--warning-orange').trim();
                 resultDiv.innerHTML = `
                     <div style="color: var(--warning-orange); font-weight: bold; margin-bottom: 10px; font-family: var(--font-mono);">
                         <i class="fa-solid fa-exclamation-circle"></i> ERROR

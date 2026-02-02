@@ -427,12 +427,22 @@
             font-size: 0.85rem; letter-spacing: 1px;
         }
         .btn-primary { 
-            background-color: var(--hazard-orange); color: #fff; 
-            box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+            background-color: var(--hazard-orange); 
+            color: #fff; 
+            box-shadow: 4px 4px 0 0 var(--hazard-dim);
             position: relative;
             overflow: hidden;
+            transition: all 0.15s ease;
         }
-        .btn-primary:hover { background-color: var(--hazard-dim); transform: translateY(-2px); }
+        .btn-primary:hover { 
+            background-color: var(--hazard-orange); 
+            transform: translate(2px, 2px); 
+            box-shadow: 2px 2px 0 0 var(--hazard-dim);
+        }
+        .btn-primary:active {
+            transform: translate(4px, 4px);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        }
         .ripple {
             position: absolute;
             border-radius: 50%;
@@ -561,20 +571,48 @@
             max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.02);
             border: 1px solid var(--border-color); padding: 40px;
         }
-        .form-group { margin-bottom: 25px; }
+        .form-group { 
+            margin-bottom: 25px; 
+            position: relative;
+        }
         .form-label {
-            display: block; margin-bottom: 8px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            text-transform: uppercase;
             letter-spacing: 0.1em;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            background: transparent;
+            padding: 0 4px;
+        }
+        .form-label.floating {
+            top: -10px;
+            font-size: 0.65rem;
+            color: var(--hazard-orange);
+            background: var(--bg-color);
         }
         .form-control {
-            width: 100%; background: #080808; border: 1px solid #333;
-            color: #fff; padding: 14px; font-family: var(--font-mono);
-            font-size: 0.9rem; transition: var(--transition);
+            width: 100%; 
+            background: rgba(0,255,0,0.03);
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.05));
+            background-size: 100% 2px;
+            border: none;
+            border-bottom: 2px solid var(--border-color);
+            border-radius: 0;
+            color: #fff; 
+            padding: 14px; 
+            font-family: var(--font-mono);
+            font-size: 0.9rem; 
+            transition: var(--transition);
         }
         .form-control:focus { 
-            outline: none; border-color: var(--hazard-orange); 
-            box-shadow: 0 0 10px rgba(255,69,0,0.1);
+            outline: none; 
+            border-color: var(--cctv-green); 
+            box-shadow: 0 0 10px rgba(0,255,0,0.1);
         }
         .form-control.error {
             border-color: var(--alert-red);
@@ -2340,6 +2378,86 @@
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
+            });
+        });
+
+        // ===== Terminal Input Form Effects =====
+        
+        // Combined Floating Label and Placeholder Typing Animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const formControls = document.querySelectorAll('.form-control');
+            
+            formControls.forEach(input => {
+                // === Floating Label Setup ===
+                const formGroup = input.closest('.form-group');
+                const label = formGroup ? formGroup.querySelector('.form-label') : null;
+                
+                if (label) {
+                    // Check if input has value on load
+                    if (input.value.trim() !== '') {
+                        label.classList.add('floating');
+                    }
+                    
+                    // Float label on focus
+                    input.addEventListener('focus', function() {
+                        label.classList.add('floating');
+                    });
+                    
+                    // Un-float label on blur if input is empty
+                    input.addEventListener('blur', function() {
+                        if (input.value.trim() === '') {
+                            label.classList.remove('floating');
+                        }
+                    });
+                    
+                    // Keep label floating if input has value
+                    input.addEventListener('input', function() {
+                        if (input.value.trim() !== '') {
+                            label.classList.add('floating');
+                        }
+                    });
+                }
+                
+                // === Placeholder Typing Animation ===
+                const originalPlaceholder = input.getAttribute('placeholder');
+                if (!originalPlaceholder) return;
+                
+                let typingInterval = null;
+                let hasTyped = false;
+                
+                // Helper function to clear typing animation
+                const clearTypingAnimation = () => {
+                    if (typingInterval) {
+                        clearInterval(typingInterval);
+                        typingInterval = null;
+                        input.setAttribute('placeholder', originalPlaceholder);
+                    }
+                };
+                
+                input.addEventListener('focus', function() {
+                    // Only animate placeholder on first focus
+                    if (!hasTyped && originalPlaceholder) {
+                        hasTyped = true;
+                        input.setAttribute('placeholder', '');
+                        
+                        let charIndex = 0;
+                        typingInterval = setInterval(() => {
+                            if (charIndex < originalPlaceholder.length) {
+                                input.setAttribute('placeholder', originalPlaceholder.substring(0, charIndex + 1));
+                                charIndex++;
+                            } else {
+                                clearInterval(typingInterval);
+                                typingInterval = null;
+                            }
+                        }, 50); // Type one character every 50ms
+                    }
+                });
+                
+                // Clear typing interval if user starts typing during animation
+                input.addEventListener('input', clearTypingAnimation);
+                
+                // Clear typing interval if user blurs before animation completes
+                input.addEventListener('blur', clearTypingAnimation);
             });
         });
     </script>

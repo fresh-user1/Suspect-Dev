@@ -288,7 +288,7 @@
                 border: 1px solid var(--border-color);
                 background: transparent;
                 color: var(--text-main);
-                box-shadow: 4px 4px 0 0 var(--hazard-orange); /* Sharp stencil shadow */
+                box-shadow: 0 0 6px rgba(255, 69, 0, 0.2); /* Orange glow shadow */
                 transition: none; /* Hilangkan transisi */
             }
 
@@ -299,7 +299,7 @@
                 border-color: var(--border-color);
                 color: var(--text-main);
                 transform: none;
-                box-shadow: 4px 4px 0 0 var(--hazard-orange); /* Sharp stencil shadow */
+                box-shadow: 0 0 6px rgba(255, 69, 0, 0.2); /* Orange glow shadow */
             }
         }
 
@@ -432,6 +432,39 @@
         body.light-mode .victims-amount {
             color: var(--text-main) !important;
             font-weight: 700;
+        }
+        
+        /* 4. Segmented Bar Light Mode Overrides */
+        body.light-mode .segment {
+            background: #E5E7EB; /* Empty track visible in light mode */
+        }
+        
+        body.light-mode .segment.filled {
+            box-shadow: 0 0 6px currentColor;
+        }
+        
+        body.light-mode .segmented-bar-value {
+            color: #111111;
+        }
+        
+        body.light-mode .wallet-address {
+            color: #374151; /* Ensure visible when unblurred */
+        }
+        
+        /* 5. Stamp Visibility in Light Mode */
+        body.light-mode .scammer-wallet-card.risk-high::before,
+        body.light-mode .scammer-wallet-card.risk-medium::before {
+            opacity: 0.2;
+        }
+        
+        body.light-mode .scammer-wallet-card.risk-high:hover::before,
+        body.light-mode .scammer-wallet-card.risk-medium:hover::before {
+            opacity: 0.35;
+        }
+        
+        /* 6. Ensure "CASE FILE NO." label stays red in both modes */
+        .case-file-label {
+            color: #dc2626 !important; /* Force red in both dark and light modes */
         }
 
         .hero-subtitle {
@@ -926,7 +959,12 @@
         
         .segment.filled {
             background: var(--segment-color);
-            box-shadow: 4px 4px 0 0 var(--segment-color);
+            box-shadow: 0 0 6px var(--segment-color);
+        }
+        
+        /* Hover brightness increase on filled segments */
+        .segment.filled:hover {
+            filter: brightness(1.2);
         }
         
         .segment.filled::after {
@@ -968,6 +1006,34 @@
         
         .bar-safe {
             --segment-color: #10b981;
+        }
+        
+        /* Pulse animation for high risk (>90) segments */
+        @keyframes segmentPulse {
+            0%, 100% {
+                box-shadow: 0 0 6px var(--segment-color);
+            }
+            50% {
+                box-shadow: 0 0 12px var(--segment-color);
+            }
+        }
+        
+        .bar-danger .segment.filled.high-risk {
+            animation: segmentPulse 2s ease-in-out infinite;
+        }
+        
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .bar-danger .segment.filled.high-risk {
+                animation: none;
+            }
+        }
+        
+        /* Mobile responsive: scale down segmented bar */
+        @media (max-width: 768px) {
+            .segmented-bar-container {
+                width: 80px;
+            }
         }
         .risk-score-section {
             display: flex;
@@ -1327,16 +1393,16 @@
                             <div class="risk-score-section">
                                 <div class="segmented-bar-container bar-danger">
                                     <div class="segmented-bar">
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
                                     </div>
                                     <div class="segmented-bar-score">
                                         <span class="segmented-bar-value">98</span>
@@ -1389,14 +1455,14 @@
                             <div class="risk-score-section">
                                 <div class="segmented-bar-container bar-danger">
                                     <div class="segmented-bar">
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
                                         <div class="segment"></div>
                                         <div class="segment"></div>
                                     </div>
@@ -1451,15 +1517,15 @@
                             <div class="risk-score-section">
                                 <div class="segmented-bar-container bar-danger">
                                     <div class="segmented-bar">
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
                                         <div class="segment"></div>
                                     </div>
                                     <div class="segmented-bar-score">
@@ -1513,14 +1579,14 @@
                             <div class="risk-score-section">
                                 <div class="segmented-bar-container bar-danger">
                                     <div class="segmented-bar">
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
                                         <div class="segment"></div>
                                         <div class="segment"></div>
                                     </div>
@@ -1575,16 +1641,16 @@
                             <div class="risk-score-section">
                                 <div class="segmented-bar-container bar-danger">
                                     <div class="segmented-bar">
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
-                                        <div class="segment filled"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
                                     </div>
                                     <div class="segmented-bar-score">
                                         <span class="segmented-bar-value">95</span>
@@ -2386,6 +2452,55 @@
                 }
             });
         });
+
+        // Segmented Bar Dynamic Filling with Scroll Animation
+        function animateSegmentedBars() {
+            // Constants for better maintainability
+            const HIGH_RISK_THRESHOLD = 90;
+            const SEGMENT_ANIMATION_DELAY_MS = 50;
+            const TOTAL_SEGMENTS = 10;
+            
+            const barContainers = document.querySelectorAll('.segmented-bar-container');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.dataset.animated) {
+                        entry.target.dataset.animated = 'true';
+                        
+                        const container = entry.target;
+                        const scoreValue = parseInt(container.querySelector('.segmented-bar-value')?.textContent || '0', 10);
+                        const segments = container.querySelectorAll('.segment');
+                        const isHighRisk = scoreValue > HIGH_RISK_THRESHOLD;
+                        
+                        // Calculate how many segments should be filled (each segment = 10%)
+                        // Using Math.min to ensure we never exceed total segments
+                        const filledCount = Math.min(Math.ceil(scoreValue / 10), TOTAL_SEGMENTS);
+                        
+                        // Animate segments with staggered delay
+                        segments.forEach((segment, index) => {
+                            if (index < filledCount) {
+                                setTimeout(() => {
+                                    segment.classList.add('filled');
+                                    // Add high-risk class for pulse animation
+                                    if (isHighRisk) {
+                                        segment.classList.add('high-risk');
+                                    }
+                                }, index * SEGMENT_ANIMATION_DELAY_MS);
+                            }
+                        });
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            barContainers.forEach(container => observer.observe(container));
+        }
+        
+        // Initialize segmented bar animations on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', animateSegmentedBars);
+        } else {
+            animateSegmentedBars();
+        }
     </script>
 
     <!-- Live Threat Feed Marquee -->

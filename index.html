@@ -1022,6 +1022,13 @@
             animation: segmentPulse 2s ease-in-out infinite;
         }
         
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .bar-danger .segment.filled.high-risk {
+                animation: none;
+            }
+        }
+        
         /* Mobile responsive: scale down segmented bar */
         @media (max-width: 768px) {
             .segmented-bar-container {
@@ -2456,12 +2463,12 @@
                         entry.target.dataset.animated = 'true';
                         
                         const container = entry.target;
-                        const scoreValue = parseInt(container.querySelector('.segmented-bar-value')?.textContent || '0');
+                        const scoreValue = parseInt(container.querySelector('.segmented-bar-value')?.textContent || '0', 10);
                         const segments = container.querySelectorAll('.segment');
                         const isHighRisk = scoreValue > 90;
                         
                         // Calculate how many segments should be filled (each segment = 10%)
-                        const filledCount = Math.ceil(scoreValue / 10);
+                        const filledCount = Math.round(scoreValue / 10);
                         
                         // Animate segments with staggered delay
                         segments.forEach((segment, index) => {

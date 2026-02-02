@@ -2383,48 +2383,42 @@
 
         // ===== Terminal Input Form Effects =====
         
-        // Floating Label Animation
+        // Combined Floating Label and Placeholder Typing Animation
         document.addEventListener('DOMContentLoaded', function() {
             const formControls = document.querySelectorAll('.form-control');
             
             formControls.forEach(input => {
+                // === Floating Label Setup ===
                 const formGroup = input.closest('.form-group');
-                if (!formGroup) return;
+                const label = formGroup ? formGroup.querySelector('.form-label') : null;
                 
-                const label = formGroup.querySelector('.form-label');
-                if (!label) return;
-                
-                // Check if input has value on load
-                if (input.value.trim() !== '') {
-                    label.classList.add('floating');
-                }
-                
-                // Float label on focus
-                input.addEventListener('focus', function() {
-                    label.classList.add('floating');
-                });
-                
-                // Un-float label on blur if input is empty
-                input.addEventListener('blur', function() {
-                    if (input.value.trim() === '') {
-                        label.classList.remove('floating');
-                    }
-                });
-                
-                // Keep label floating if input has value
-                input.addEventListener('input', function() {
+                if (label) {
+                    // Check if input has value on load
                     if (input.value.trim() !== '') {
                         label.classList.add('floating');
                     }
-                });
-            });
-        });
-        
-        // Placeholder Typing Animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const formControls = document.querySelectorAll('.form-control');
-            
-            formControls.forEach(input => {
+                    
+                    // Float label on focus
+                    input.addEventListener('focus', function() {
+                        label.classList.add('floating');
+                    });
+                    
+                    // Un-float label on blur if input is empty
+                    input.addEventListener('blur', function() {
+                        if (input.value.trim() === '') {
+                            label.classList.remove('floating');
+                        }
+                    });
+                    
+                    // Keep label floating if input has value
+                    input.addEventListener('input', function() {
+                        if (input.value.trim() !== '') {
+                            label.classList.add('floating');
+                        }
+                    });
+                }
+                
+                // === Placeholder Typing Animation ===
                 const originalPlaceholder = input.getAttribute('placeholder');
                 if (!originalPlaceholder) return;
                 
@@ -2451,6 +2445,14 @@
                 
                 // Clear typing interval if user starts typing during animation
                 input.addEventListener('input', function() {
+                    if (typingInterval) {
+                        clearInterval(typingInterval);
+                        input.setAttribute('placeholder', originalPlaceholder);
+                    }
+                });
+                
+                // Clear typing interval if user blurs before animation completes
+                input.addEventListener('blur', function() {
                     if (typingInterval) {
                         clearInterval(typingInterval);
                         input.setAttribute('placeholder', originalPlaceholder);

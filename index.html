@@ -421,6 +421,11 @@
             0% { left: -100%; }
             100% { left: 150%; }
         }
+        @media (prefers-reduced-motion: reduce) {
+            #hero::before {
+                animation: none;
+            }
+        }
         .hero-disclaimer {
             font-size: 0.8rem; color: #666; font-family: var(--font-mono);
             margin-bottom: 40px; font-style: italic;

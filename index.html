@@ -701,11 +701,16 @@
         .fade-in { animation: fadeIn 0.8s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Scammer Wallet Cards Styles */
+        /* Scammer Wallet Cards Styles - Evidence Dossier */
         .scammer-wallet-card {
-            background: linear-gradient(to right, #111111, #000000);
+            position: relative;
+            background: var(--bg-secondary);
             border: 1px solid #2a2a2a;
-            border-radius: 8px;
+            border-radius: 0; /* Sharp corners */
+            border-left: 3px solid var(--hazard-orange);
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.05"/></svg>');
+            background-blend-mode: overlay;
             padding: 24px;
             margin-bottom: 16px;
             transition: all 0.3s ease;
@@ -713,18 +718,83 @@
         .scammer-wallet-card:hover {
             border-color: #ef4444;
             box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Rubber Stamp Overlays */
+        .scammer-wallet-card::before {
+            content: attr(data-stamp-text);
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            z-index: 0;
+            font-family: var(--font-mono);
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 12px 20px;
+            border: 3px solid;
+            border-radius: 8px;
+            transform: rotate(-12deg);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* High Risk Stamp (>90) */
+        .scammer-wallet-card.risk-high::before {
+            content: 'CONFIRMED THREAT';
+            color: #dc2626;
+            border-color: #dc2626;
+            opacity: 0.15;
+        }
+        
+        .scammer-wallet-card.risk-high:hover::before {
+            opacity: 0.3;
+        }
+        
+        /* Medium Risk Stamp (70-90) */
+        .scammer-wallet-card.risk-medium::before {
+            content: 'UNDER SURVEILLANCE';
+            color: #eab308;
+            border-color: #eab308;
+            opacity: 0.15;
+        }
+        
+        .scammer-wallet-card.risk-medium:hover::before {
+            opacity: 0.3;
         }
         .wallet-card-container {
             display: flex;
             align-items: flex-start;
             gap: 24px;
+            position: relative;
+            z-index: 1;
         }
+        
+        .serial-number-wrapper {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .case-file-label {
+            color: #dc2626;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
         .serial-number-box {
             flex-shrink: 0;
             width: 48px;
             height: 48px;
             background: linear-gradient(to bottom right, #dc2626, #991b1b);
-            border-radius: 8px;
+            border-radius: 0; /* Sharp corners */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -765,6 +835,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            filter: blur(4px);
+            transition: filter 0.3s ease;
+        }
+        
+        .wallet-address:hover {
+            filter: blur(0);
         }
         .status-badge {
             flex-shrink: 0;
@@ -788,6 +864,73 @@
             background: rgba(124, 45, 18, 0.5);
             color: #fdba74;
             border: 1px solid #c2410c;
+        }
+        
+        /* Segmented Bar - Tactical Loading Style */
+        .segmented-bar-container {
+            flex-shrink: 0;
+            width: 120px;
+        }
+        
+        .segmented-bar {
+            display: flex;
+            gap: 3px;
+            height: 24px;
+            align-items: flex-end;
+        }
+        
+        .segment {
+            flex: 1;
+            background: #1f2937;
+            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .segment.filled {
+            background: var(--segment-color);
+            box-shadow: 0 0 8px var(--segment-color);
+        }
+        
+        .segment.filled::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+        }
+        
+        .segmented-bar-score {
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .segmented-bar-value {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .segmented-bar-label {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: #9ca3af;
+        }
+        
+        /* Color variants for segmented bar */
+        .bar-danger {
+            --segment-color: #ef4444;
+        }
+        
+        .bar-warning {
+            --segment-color: #fbbf24;
+        }
+        
+        .bar-safe {
+            --segment-color: #10b981;
         }
         .risk-score-section {
             display: flex;
@@ -1116,11 +1259,14 @@
 
             <div class="max-w-5xl mt-12">
                 <!-- Scammer Wallet Card 1 -->
-                <div class="scammer-wallet-card">
+                <div class="scammer-wallet-card risk-high">
                     <div class="wallet-card-container">
-                        <!-- Serial Number -->
-                        <div class="serial-number-box">
-                            <span class="serial-number">01</span>
+                        <!-- Serial Number with Case File Label -->
+                        <div class="serial-number-wrapper">
+                            <span class="case-file-label">CASE FILE NO.</span>
+                            <div class="serial-number-box">
+                                <span class="serial-number">01</span>
+                            </div>
                         </div>
 
                         <!-- Main Content -->
@@ -1139,14 +1285,24 @@
                                 </div>
                             </div>
 
-                            <!-- Risk Score -->
+                            <!-- Risk Score with Segmented Bar -->
                             <div class="risk-score-section">
-                                <div class="circular-gauge gauge-danger">
-                                    <div class="circular-gauge-ring pulse-high-risk" style="--gauge-percentage: 98;">
-                                        <div class="circular-gauge-center">
-                                            <span class="circular-gauge-score">98</span>
-                                            <span class="circular-gauge-max">/100</span>
-                                        </div>
+                                <div class="segmented-bar-container bar-danger">
+                                    <div class="segmented-bar">
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                    </div>
+                                    <div class="segmented-bar-score">
+                                        <span class="segmented-bar-value">98</span>
+                                        <span class="segmented-bar-label">/100</span>
                                     </div>
                                 </div>
                                 <div class="risk-score-info">
@@ -1165,11 +1321,14 @@
                 </div>
 
                 <!-- Scammer Wallet Card 2 -->
-                <div class="scammer-wallet-card">
+                <div class="scammer-wallet-card risk-medium">
                     <div class="wallet-card-container">
-                        <!-- Serial Number -->
-                        <div class="serial-number-box">
-                            <span class="serial-number">02</span>
+                        <!-- Serial Number with Case File Label -->
+                        <div class="serial-number-wrapper">
+                            <span class="case-file-label">CASE FILE NO.</span>
+                            <div class="serial-number-box">
+                                <span class="serial-number">02</span>
+                            </div>
                         </div>
 
                         <!-- Main Content -->
@@ -1188,14 +1347,24 @@
                                 </div>
                             </div>
 
-                            <!-- Risk Score -->
+                            <!-- Risk Score with Segmented Bar -->
                             <div class="risk-score-section">
-                                <div class="circular-gauge gauge-danger">
-                                    <div class="circular-gauge-ring" style="--gauge-percentage: 85;">
-                                        <div class="circular-gauge-center">
-                                            <span class="circular-gauge-score">85</span>
-                                            <span class="circular-gauge-max">/100</span>
-                                        </div>
+                                <div class="segmented-bar-container bar-danger">
+                                    <div class="segmented-bar">
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                    </div>
+                                    <div class="segmented-bar-score">
+                                        <span class="segmented-bar-value">85</span>
+                                        <span class="segmented-bar-label">/100</span>
                                     </div>
                                 </div>
                                 <div class="risk-score-info">
@@ -1214,11 +1383,14 @@
                 </div>
 
                 <!-- Scammer Wallet Card 3 -->
-                <div class="scammer-wallet-card">
+                <div class="scammer-wallet-card risk-high">
                     <div class="wallet-card-container">
-                        <!-- Serial Number -->
-                        <div class="serial-number-box">
-                            <span class="serial-number">03</span>
+                        <!-- Serial Number with Case File Label -->
+                        <div class="serial-number-wrapper">
+                            <span class="case-file-label">CASE FILE NO.</span>
+                            <div class="serial-number-box">
+                                <span class="serial-number">03</span>
+                            </div>
                         </div>
 
                         <!-- Main Content -->
@@ -1237,14 +1409,24 @@
                                 </div>
                             </div>
 
-                            <!-- Risk Score -->
+                            <!-- Risk Score with Segmented Bar -->
                             <div class="risk-score-section">
-                                <div class="circular-gauge gauge-danger">
-                                    <div class="circular-gauge-ring pulse-high-risk" style="--gauge-percentage: 92;">
-                                        <div class="circular-gauge-center">
-                                            <span class="circular-gauge-score">92</span>
-                                            <span class="circular-gauge-max">/100</span>
-                                        </div>
+                                <div class="segmented-bar-container bar-danger">
+                                    <div class="segmented-bar">
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment"></div>
+                                    </div>
+                                    <div class="segmented-bar-score">
+                                        <span class="segmented-bar-value">92</span>
+                                        <span class="segmented-bar-label">/100</span>
                                     </div>
                                 </div>
                                 <div class="risk-score-info">
@@ -1263,11 +1445,14 @@
                 </div>
 
                 <!-- Scammer Wallet Card 4 -->
-                <div class="scammer-wallet-card">
+                <div class="scammer-wallet-card risk-medium">
                     <div class="wallet-card-container">
-                        <!-- Serial Number -->
-                        <div class="serial-number-box">
-                            <span class="serial-number">04</span>
+                        <!-- Serial Number with Case File Label -->
+                        <div class="serial-number-wrapper">
+                            <span class="case-file-label">CASE FILE NO.</span>
+                            <div class="serial-number-box">
+                                <span class="serial-number">04</span>
+                            </div>
                         </div>
 
                         <!-- Main Content -->
@@ -1286,14 +1471,24 @@
                                 </div>
                             </div>
 
-                            <!-- Risk Score -->
+                            <!-- Risk Score with Segmented Bar -->
                             <div class="risk-score-section">
-                                <div class="circular-gauge gauge-danger">
-                                    <div class="circular-gauge-ring" style="--gauge-percentage: 78;">
-                                        <div class="circular-gauge-center">
-                                            <span class="circular-gauge-score">78</span>
-                                            <span class="circular-gauge-max">/100</span>
-                                        </div>
+                                <div class="segmented-bar-container bar-danger">
+                                    <div class="segmented-bar">
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment"></div>
+                                        <div class="segment"></div>
+                                    </div>
+                                    <div class="segmented-bar-score">
+                                        <span class="segmented-bar-value">78</span>
+                                        <span class="segmented-bar-label">/100</span>
                                     </div>
                                 </div>
                                 <div class="risk-score-info">
@@ -1312,11 +1507,14 @@
                 </div>
 
                 <!-- Scammer Wallet Card 5 -->
-                <div class="scammer-wallet-card">
+                <div class="scammer-wallet-card risk-high">
                     <div class="wallet-card-container">
-                        <!-- Serial Number -->
-                        <div class="serial-number-box">
-                            <span class="serial-number">05</span>
+                        <!-- Serial Number with Case File Label -->
+                        <div class="serial-number-wrapper">
+                            <span class="case-file-label">CASE FILE NO.</span>
+                            <div class="serial-number-box">
+                                <span class="serial-number">05</span>
+                            </div>
                         </div>
 
                         <!-- Main Content -->
@@ -1335,14 +1533,24 @@
                                 </div>
                             </div>
 
-                            <!-- Risk Score -->
+                            <!-- Risk Score with Segmented Bar -->
                             <div class="risk-score-section">
-                                <div class="circular-gauge gauge-danger">
-                                    <div class="circular-gauge-ring pulse-high-risk" style="--gauge-percentage: 95;">
-                                        <div class="circular-gauge-center">
-                                            <span class="circular-gauge-score">95</span>
-                                            <span class="circular-gauge-max">/100</span>
-                                        </div>
+                                <div class="segmented-bar-container bar-danger">
+                                    <div class="segmented-bar">
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                        <div class="segment filled"></div>
+                                    </div>
+                                    <div class="segmented-bar-score">
+                                        <span class="segmented-bar-value">95</span>
+                                        <span class="segmented-bar-label">/100</span>
                                     </div>
                                 </div>
                                 <div class="risk-score-info">

@@ -638,39 +638,6 @@
             content: '>'; color: var(--hazard-orange); font-weight: bold;
         }
 
-        /* Point System Section */
-        #point-system { background: var(--bg-secondary); border-top: 1px solid var(--gray-222); border-bottom: 1px solid var(--gray-222); }
-        .point-flow {
-            display: flex; justify-content: space-between; align-items: center;
-            max-width: 900px; margin: 50px auto; position: relative;
-        }
-        .point-step {
-            text-align: center; flex: 1; position: relative; z-index: 2;
-        }
-        .step-number {
-            width: 60px; height: 60px; border: 2px solid var(--hazard-orange);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 15px; font-family: var(--font-mono); font-weight: bold;
-            font-size: 1.2rem; background: var(--bg-color);
-        }
-        .point-step h4 { font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
-        .point-step p { font-size: 0.8rem; color: var(--gray-666); padding: 0 10px; }
-        
-        .connector {
-            position: absolute; top: 30px; left: 20%; right: 20%; height: 2px;
-            background: linear-gradient(to right, var(--hazard-orange), transparent, var(--hazard-orange));
-            z-index: 1;
-        }
-
-        .formula-box {
-            background: var(--bg-pure-black); border: 1px solid var(--border-color);
-            padding: 30px; text-align: center; margin-top: 40px;
-            font-family: var(--font-mono);
-        }
-        .formula {
-            font-size: 1.2rem; color: var(--hazard-orange); margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
 
         /* Report Form */
         .form-box {
@@ -1315,7 +1282,6 @@
                 
                 <div class="nav-links" id="navLinks">
                     <a href="#about">About</a>
-                    <a href="#point-system">Point System</a>
                     
                     <!-- Mobile: Theme Toggle below Report -->
                     <button class="theme-toggle" id="themeToggleMobile" aria-label="Switch to light mode">
@@ -1728,81 +1694,6 @@
         </div>
     </section>
 
-    <!-- Point System Section -->
-    <section id="point-system" class="section-padding">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Point & Incentive System</h2>
-                <p>
-                    Initial mechanism for building the database: Contributors who provide valid evidence will earn points that later become parameters for reward allocation.
-                </p>
-            </div>
-
-            <div class="point-flow">
-                <div class="connector"></div>
-                
-                <div class="point-step">
-                    <div class="step-number">01</div>
-                    <h4>Submit Evidence</h4>
-                    <p>Report dev wallet + rugpull tx hash</p>
-                </div>
-                
-                <div class="point-step">
-                    <div class="step-number">02</div>
-                    <h4>Verification</h4>
-                    <p>Community validators check on-chain validity</p>
-                </div>
-                
-                <div class="point-step">
-                    <div class="step-number">03</div>
-                    <h4>Earn Points</h4>
-                    <p>Points are added to contributor account</p>
-                </div>
-                
-                <div class="point-step">
-                    <div class="step-number">04</div>
-                    <h4>Airdrop Allocation</h4>
-                    <p>Points + Token Hold = Allocation</p>
-                </div>
-            </div>
-
-            <div class="formula-box">
-                <div style="margin-bottom: 20px; color: var(--gray-666); font-size: 0.8rem;">ALLOCATION FORMULA (INITIAL CONCEPT)</div>
-                <div class="formula">
-                    (Total Contribution Points × Weight) + (Avg Token Hold × Duration) = Allocation Score
-                </div>
-                <p style="color: var(--gray-444); font-size: 0.8rem; margin-top: 10px;">
-                    *Mathematical details and smart contract distribution are still under development. No specific monetary value promised.
-                </p>
-            </div>
-
-            <div class="grid-2" style="margin-top: 50px;">
-                <div class="card">
-                    <h3 style="color: var(--hazard-orange); margin-bottom: 15px;">
-                        <i class="fa-solid fa-upload"></i> How to Submit
-                    </h3>
-                    <p style="font-size: 0.85rem; line-height: 1.8; color: var(--text-muted);">
-                        Submit a rug pull indication wallet report via email in the following format:<br>
-                        - Telegram username (your telegram):<br>
-                        - Developer Wallet Address:<br>
-                        - Transaction Hash:<br>
-                        - Project Token:
-                    </p>
-                </div>
-                <div class="card">
-                    <h3 style="color: var(--cctv-green); margin-bottom: 15px;">
-                        <i class="fa-solid fa-shield-halved"></i> Anti-Gaming
-                    </h3>
-                    <p style="font-size: 0.85rem; line-height: 1.8; color: var(--text-muted);">
-                        - Minimum 7-day token holding for airdrop eligibility<br>
-                        - Sybil resistance via on-chain activity check<br>
-                        - False reports will reduce reputation (not points)<br>
-                        - Automatic multi-wallet detection
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Simple Check Wallet Section -->
     <section id="check" class="section-padding" style="background: var(--bg-secondary);">

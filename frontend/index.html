@@ -1303,9 +1303,6 @@
                 *Platform is still under active development. Displayed data is preliminary and requires community verification.
             </p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="#check" class="btn btn-primary" id="check-wallet-btn" aria-label="Check wallet for risk">
-                    <i class="fa-solid fa-magnifying-glass"></i> Check Wallet
-                </a>
                 <a href="#about" class="btn btn-outline" aria-label="Learn more about the platform">
                     <i class="fa-solid fa-circle-info"></i> Learn More
                 </a>
@@ -1358,7 +1355,6 @@
                         <ul class="feature-list">
                             <li>Cross-project tracking (same wallet across different tokens)</li>
                             <li>Focus on liquidity drain patterns, not just code audits</li>
-                            <li>Open validator reputation system (anyone can be a verifier)</li>
                             <li>No "pay to remove" labels — absolute transparency</li>
                         </ul>
                     </div>
@@ -1693,30 +1689,6 @@
             </div>
         </div>
     </section>
-
-
-    <!-- Simple Check Wallet Section -->
-    <section id="check" class="section-padding" style="background: var(--bg-secondary);">
-        <div class="container" style="max-width: 600px;">
-            <div class="section-header">
-                <h2 class="section-title" style="border: none; display: inline-block;">Check Wallet</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Database still limited (alpha)</p>
-            </div>
-            
-            <div class="form-box">
-                <div class="form-group">
-                    <label for="walletInput" class="form-label">Solana Wallet Address</label>
-                    <input type="text" class="form-control" placeholder="7xkx... or 44-character full address" id="walletInput" aria-describedby="walletInputHelp">
-                </div>
-                <button onclick="debouncedCheckWallet()" class="btn btn-primary" style="width: 100%; justify-content: center;" aria-label="Scan database for wallet risk">
-                    <i class="fa-solid fa-search"></i> Scan Database
-                </button>
-                <div id="checkResult" style="margin-top: 20px; padding: 15px; border: 1px solid var(--gray-333); display: none; font-family: var(--font-mono); font-size: 0.85rem;">
-                    <!-- Result will appear here -->
-                </div>
-            </div>
-        </div>
-    </section>
     
     </main>
 
@@ -1900,30 +1872,6 @@
             setTimeout(typeText, 500);
         })();
         
-        // 3. Ripple Effect on Check Wallet Button
-        (function() {
-            const checkWalletBtn = document.getElementById('check-wallet-btn');
-            if (!checkWalletBtn) return;
-            
-            checkWalletBtn.addEventListener('click', function(e) {
-                const ripple = document.createElement('span');
-                ripple.className = 'ripple';
-                
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                
-                this.appendChild(ripple);
-                
-                setTimeout(() => ripple.remove(), 600);
-            });
-        })();
-        
         // ===== End Hero Section Effects =====
 
         // Toggle Mobile Menu
@@ -1999,139 +1947,6 @@
             };
             return messages[status] || 'HTTP error! status: ' + status;
         }
-
-        // Async function to simulate fetching wallet data
-        async function fetchWalletData(address) {
-            if (address.length < 32) {
-                throw new Error('Invalid Solana address');
-            }
-
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            const data = {
-                address: address,
-                balance: (Math.random() * 100).toFixed(4) + ' SOL',
-                transactionCount: Math.floor(Math.random() * 500) + 10,
-                firstSeen: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                riskScore: 0,
-                tags: []
-            };
-
-            if (address.includes('7xkx')) {
-                data.riskScore = 95;
-                data.tags = ['liquidity_drainer', 'serial_deployer'];
-            } else {
-                data.riskScore = Math.floor(Math.random() * 31) + 10;
-                data.tags = ['unknown'];
-            }
-
-            return data;
-        }
-
-        // Helper function to show terminal loading log
-        async function showTerminalLog(resultDiv, messages) {
-            resultDiv.innerHTML = '<div class="terminal-log"></div>';
-            const terminalLog = resultDiv.querySelector('.terminal-log');
-            
-            for (let i = 0; i < messages.length; i++) {
-                await new Promise(resolve => setTimeout(resolve, 400));
-                const line = document.createElement('div');
-                line.className = 'terminal-line';
-                line.innerHTML = `<span>${messages[i]}</span><span class="terminal-cursor"></span>`;
-                terminalLog.insertBefore(line, terminalLog.firstChild);
-            }
-
-            await new Promise(resolve => setTimeout(resolve, 400));
-            const cursors = terminalLog.querySelectorAll('.terminal-cursor');
-            cursors.forEach((cursor, index) => {
-                if (index < cursors.length - 1) {
-                    cursor.remove();
-                }
-            });
-        }
-
-        // Async function to GET wallet data from API
-        async function checkWallet() {
-            const input = document.getElementById('walletInput').value.trim();
-            const resultDiv = document.getElementById('checkResult');
-            
-            if (input.length < 10) {
-                showNotification('Enter a valid address', 'error');
-                return;
-            }
-
-            resultDiv.style.display = 'block';
-            
-            // Get CSS variable values from computed style
-            const rootStyles = getComputedStyle(document.documentElement);
-            resultDiv.style.borderColor = rootStyles.getPropertyValue('--cctv-green').trim();
-
-            const terminalMessages = [
-                'Connecting to Solana RPC...',
-                'Querying Blockchair API...',
-                'Analyzing patterns...',
-                'Finalizing report...'
-            ];
-
-            try {
-                await showTerminalLog(resultDiv, terminalMessages);
-
-                const data = await fetchWalletData(input);
-                
-                if (data.riskScore >= 70) {
-                    resultDiv.style.borderColor = rootStyles.getPropertyValue('--alert-red').trim();
-                    resultDiv.innerHTML = `
-                        <div style="color: var(--alert-red); font-weight: bold; margin-bottom: 15px; font-family: var(--font-mono);">
-                            <i class="fa-solid fa-triangle-exclamation"></i> HIGH RISK DETECTED
-                        </div>
-                        <div style="font-family: var(--font-mono); line-height: 1.8;">
-                            <div><strong>Address:</strong> ${data.address.substring(0, 8)}...${data.address.substring(data.address.length - 8)}</div>
-                            <div><strong>Balance:</strong> ${data.balance}</div>
-                            <div><strong>Transactions:</strong> ${data.transactionCount}</div>
-                            <div><strong>First Seen:</strong> ${data.firstSeen}</div>
-                            <div><strong>Risk Score:</strong> <span style="color: var(--alert-red);">${data.riskScore}/100</span></div>
-                            <div><strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: var(--alert-red); padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; margin-right: 5px;">${tag}</span>`).join('')}</div>
-                        </div>
-                    `;
-                    showNotification('High risk wallet detected!', 'error');
-                } else {
-                    resultDiv.style.borderColor = rootStyles.getPropertyValue('--cctv-green').trim();
-                    resultDiv.innerHTML = `
-                        <div style="color: var(--cctv-green); margin-bottom: 15px; font-family: var(--font-mono);">
-                            <i class="fa-solid fa-check-circle"></i> LOW RISK
-                        </div>
-                        <div style="font-family: var(--font-mono); line-height: 1.8;">
-                            <div><strong>Address:</strong> ${data.address.substring(0, 8)}...${data.address.substring(data.address.length - 8)}</div>
-                            <div><strong>Balance:</strong> ${data.balance}</div>
-                            <div><strong>Transactions:</strong> ${data.transactionCount}</div>
-                            <div><strong>First Seen:</strong> ${data.firstSeen}</div>
-                            <div><strong>Risk Score:</strong> <span style="color: var(--cctv-green);">${data.riskScore}/100</span></div>
-                            <div><strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: var(--gray-666); padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; margin-right: 5px;">${tag}</span>`).join('')}</div>
-                            <div style="color: var(--gray-666); margin-top: 10px; font-size: 0.8rem;">
-                                *Low risk score does not guarantee safety. Always DYOR.
-                            </div>
-                        </div>
-                    `;
-                    showNotification('Wallet scanned successfully', 'success');
-                }
-            } catch (error) {
-                console.error('Error checking wallet:', error);
-                resultDiv.style.borderColor = rootStyles.getPropertyValue('--warning-orange').trim();
-                resultDiv.innerHTML = `
-                    <div style="color: var(--warning-orange); font-weight: bold; margin-bottom: 10px; font-family: var(--font-mono);">
-                        <i class="fa-solid fa-exclamation-circle"></i> ERROR
-                    </div>
-                    <div style="font-family: var(--font-mono);">${error.message}</div>
-                    <div style="color: var(--gray-666); margin-top: 10px; font-size: 0.8rem; font-family: var(--font-mono);">
-                        Please ensure the address is at least 32 characters long.
-                    </div>
-                `;
-                showNotification('Error: ' + error.message, 'error');
-            }
-        }
-
-        // Create debounced version of checkWallet (500ms delay)
-        const debouncedCheckWallet = debounce(checkWallet, 500);
 
         // Simple notification system
         function showNotification(message, type = 'info') {

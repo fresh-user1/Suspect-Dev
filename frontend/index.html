@@ -193,6 +193,7 @@
         }
         
         /* Media query fallback for system preference */
+        /* Note: This assumes absence of 'light-mode' class means dark mode */
         @media (prefers-color-scheme: light) {
             .logo-dark {
                 display: none;
@@ -1299,8 +1300,8 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo" aria-label="SUSPECTED Home">
-                    <img src="https://iili.io/fZDnYHF.md.png" alt="SUSPECTED Logo" class="logo-image logo-dark" id="logoDark">
-                    <img src="https://iili.io/fZDz2PR.md.png" alt="SUSPECTED Logo" class="logo-image logo-light" id="logoLight">
+                    <img src="https://iili.io/fZDnYHF.md.png" alt="SUSPECTED Logo (Dark Theme)" class="logo-image logo-dark" id="logoDark">
+                    <img src="https://iili.io/fZDz2PR.md.png" alt="SUSPECTED Logo (Light Theme)" class="logo-image logo-light" id="logoLight">
                 </a>
                 
                 <div class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
@@ -1832,8 +1833,8 @@
     <footer>
         <div class="container">
             <div class="logo" style="justify-content: center; margin-bottom: 20px;">
-                <img src="https://iili.io/fZDnYHF.md.png" alt="SUSPECTED Logo" class="logo-image logo-dark">
-                <img src="https://iili.io/fZDz2PR.md.png" alt="SUSPECTED Logo" class="logo-image logo-light">
+                <img src="https://iili.io/fZDnYHF.md.png" alt="SUSPECTED Logo (Dark Theme)" class="logo-image logo-dark">
+                <img src="https://iili.io/fZDz2PR.md.png" alt="SUSPECTED Logo (Light Theme)" class="logo-image logo-light">
             </div>
             <div class="footer-links">
                 <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>

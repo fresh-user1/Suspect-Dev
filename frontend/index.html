@@ -165,6 +165,50 @@
         }
         .logo span { color: var(--hazard-orange); }
         
+        /* Theme-based Logo Images */
+        .logo-image {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* Hide logo images by default */
+        .logo-dark, .logo-light {
+            display: none;
+        }
+        
+        /* Show dark logo by default (dark theme) */
+        .logo-dark {
+            display: block;
+        }
+        
+        /* Light mode: hide dark logo, show light logo */
+        body.light-mode .logo-dark {
+            display: none;
+        }
+        
+        body.light-mode .logo-light {
+            display: block;
+        }
+        
+        /* Media query fallback for system preference */
+        @media (prefers-color-scheme: light) {
+            .logo-dark {
+                display: none;
+            }
+            .logo-light {
+                display: block;
+            }
+            /* Override if body has explicit class */
+            body:not(.light-mode) .logo-dark {
+                display: block;
+            }
+            body:not(.light-mode) .logo-light {
+                display: none;
+            }
+        }
+        
         /* Desktop Navigation */
         .nav-links { 
             display: flex; 
@@ -1234,6 +1278,15 @@
     </style>
 </head>
 <body>
+    <!-- Apply theme immediately to prevent FOUC -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        })();
+    </script>
     <!-- Skip to content link for keyboard navigation -->
     <a href="#main-content" class="skip-to-content">Skip to main content</a>
     
@@ -1246,8 +1299,8 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo" aria-label="SUSPECTED Home">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    SUSPECTED
+                    <img src="https://iili.io/fZDnYHF.md.png" alt="SUSPECTED Logo" class="logo-image logo-dark" id="logoDark">
+                    <img src="https://iili.io/fZDz2PR.md.png" alt="SUSPECTED Logo" class="logo-image logo-light" id="logoLight">
                 </a>
                 
                 <div class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
@@ -1779,7 +1832,8 @@
     <footer>
         <div class="container">
             <div class="logo" style="justify-content: center; margin-bottom: 20px;">
-                SUSPECTED
+                <img src="https://iili.io/fZDnYHF.md.png" alt="SUSPECTED Logo" class="logo-image logo-dark">
+                <img src="https://iili.io/fZDz2PR.md.png" alt="SUSPECTED Logo" class="logo-image logo-light">
             </div>
             <div class="footer-links">
                 <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
